@@ -1,0 +1,9 @@
+# Ignore all hidden files and folders
+**/.*
+# Exception: Do not ignore .gitkeep files
+!**/.gitkeep
+# Naturally don't ignore this file.
+!.gitignore
+# Ignore the build artifacts for hypergrad since they are platform specific.
+build/**/*
+
