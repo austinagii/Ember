@@ -1,10 +1,9 @@
 # Project Logbook: HyperGrad
 
 ## Project Overview
-**Goal**: To create a fully functional library for building, training and visualizing neural networks.
-**Applications**: Mostly for facilitating a better understanding of neural networks and how they are trained.  
+**Goal**: To create a fully functional library for building, training and visualizing neural networks. </br>
+**Applications**: Mostly for facilitating a better understanding of neural networks and how they are trained. </br>
 **Approach**: Builds a DAG representing the network as a computational graph and uses reverse mode automatic differentiation to compute the gradient of the loss w.r.t to each input.
----
 
 ## Log Entries
 
