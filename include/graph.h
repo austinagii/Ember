@@ -2,55 +2,74 @@
 #define GRAPH_H 
 
 #include <vector>
+#include <functional>
+#include <iostream>
+#include <memory>
 
 namespace hyper {
 
-class Node {
-  public:
-  virtual float forward() = 0;
-  // virtual Node backward() = 0;
-  Node() {}
-  virtual ~Node() {}
-
-  protected:
-  std::vector<Node*> children;
+/**
+ * Represents a generic operation in a computation.
+ */
+struct Node {
+  // The current value of this node;
   float value;
-};
-  
-/**
- * Represents a mathematical operation performed on one or more values.
- */
-class Add: public Node {
-  public:
+  // The gradient of this node w.r.t. the ancestor on which backward was called.
+  float gradient;
+  // A callable which outputs gadient of this node when given the gradient of it's parent.
+  std::function<float(float)> grad_fn;
+  // The nodes that were used in the construction of this node.
+  std::vector<std::reference_wrapper<Node>> children;
 
-  Add(Node* augend, Node* addend) {
-    children.push_back(augend);
-    children.push_back(addend);
-  }
- 
-  float forward() {
-    float sum = 0.0f;
-    for(auto iter = children.begin(); iter != children.end(); ++iter) {
-      sum += (*iter)->forward();
+  Node(): value(0.0f), gradient(0.0f) {}
+
+  Node(float value): value(value), gradient(0.0f) {}
+
+  /**
+   * Propagates the gradient back from the parent Node to this node.
+   * N.B. This is not the typical backprop algorithm, since it does
+   * not propagate the gradient at this node to it's children.
+   */
+  void compute_gradient(float gradient) {
+    // Since gradient functions are assigned to nodes based on the operations they
+    // are participate in, a function missing a gradient function is likely the last
+    // operation in the tree and should just return 1.
+    if(this->grad_fn == nullptr) {
+      this->grad_fn = [](float v) { return v; };
     }
-    return sum;
+    this->gradient = this->grad_fn(gradient);
+
+    for (auto iter = this->children.begin(); iter != this->children.end(); ++iter) {
+      (*iter).get().compute_gradient(this->gradient);
+    } 
   }
 };
 
 /**
- * A container for a floating point value.
+ * Add two nodes and return a new node representing the sum.
  */
-class Value: public Node {
-  public:  
-  Value(const float& v) {
-    value = v;
-  }
+Node add(Node& augend, Node& addend) {
+  auto sum = Node(augend.value + addend.value);
+  sum.children.push_back(std::ref(augend));
+  sum.children.push_back(std::ref(addend));
 
-  float forward() {
-    return value;
-  }
-};
-
+  augend.grad_fn = [](float v) { return v; };
+  addend.grad_fn = [](float v) { return v; };
+  return sum;
 }
 
+/**
+ * Multiply two nodes and return a new node representing the product.
+ */
+Node multiply(Node& multiplicand, Node& multiplier) {
+  auto product = Node(multiplicand.value * multiplier.value);
+  product.children.push_back(std::ref(multiplicand));
+  product.children.push_back(std::ref(multiplier));
+
+  multiplicand.grad_fn = [&multiplier](float v) { return v * multiplier.value; };
+  multiplier.grad_fn = [&multiplicand](float v) { return v * multiplicand.value; };
+  return product;
+}
+
+}
 #endif // GRAPH_H
