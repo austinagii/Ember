@@ -8,7 +8,8 @@ using namespace hyper;
 TEST(Value, Addition) {
   auto a = Node(3.0);
   auto b = Node(2.0);
-  auto c = add(a, b);
+  auto c = a + b;
+
 
   EXPECT_EQ(c.value, 5);
 }
@@ -16,7 +17,7 @@ TEST(Value, Addition) {
 TEST(Node, BackpropagateThroughAdditionOperation) {
   auto a = Node(3.0);
   auto b = Node(2.0);
-  auto c = add(a, b);
+  auto c = a + b;
   c.compute_gradient(1.0);
 
   EXPECT_EQ(a.gradient, 1.0);
@@ -27,9 +28,10 @@ TEST(Node, BackpropagateThroughAdditionOperation) {
 TEST(Node, BackpropagateThroughNestedAdditionOperation) {
   auto a = Node(3);
   auto b = Node(2);
-  auto c = add(a, b);
+  auto c = a + b;
   auto d = Node(5);
-  auto e = add(c, d);
+  auto e = c + d;
+
   e.compute_gradient(1.0);
 
   EXPECT_EQ(a.gradient, 1.0);
@@ -42,7 +44,8 @@ TEST(Node, BackpropagateThroughNestedAdditionOperation) {
 TEST(Value, Multiplication) {
   auto a = Node(3.0f);
   auto b = Node(2.0f);
-  auto c = multiply(a, b);
+
+  auto c = a * b;
 
   EXPECT_EQ(c.value, 6.0f);
 }
@@ -50,7 +53,8 @@ TEST(Value, Multiplication) {
 TEST(Node, BackpropagateThroughMultiplicationOperation) {
   auto a = Node(3.0f);
   auto b = Node(2.0f);
-  auto c = multiply(a, b);
+  auto c = a * b;
+
   c.compute_gradient(1.0f);
 
   EXPECT_EQ(a.gradient, 2.0f);
@@ -61,9 +65,10 @@ TEST(Node, BackpropagateThroughMultiplicationOperation) {
 TEST(Node, BackpropagateThroughNestedMultiplicationOperation) {
   auto a = Node(3);
   auto b = Node(2);
-  auto c = multiply(a, b);
+  auto c = a * b;
   auto d = Node(8);
-  auto e = multiply(c, d);
+  auto e = c * d;
+
   e.compute_gradient(2);
 
   EXPECT_EQ(a.gradient, 32);
@@ -76,13 +81,14 @@ TEST(Node, BackpropagateThroughNestedMultiplicationOperation) {
 TEST(Node, BackpropagateThroughMultiplicationOperationHard) {
   auto a = Node(2.0f);
   auto b = Node(3.0f);
-  auto c = multiply(a, b);
+  auto c = a * b;
   auto d = Node(4.0f);
-  auto e = add(c, d);
+  auto e = c + d;
   auto f = Node(2.0f);
-  auto g = multiply(e, f);
+  auto g = e * f;
   auto h = Node(5.0f);
-  auto i = add(g, h);
+  auto i = g + h;
+
   i.compute_gradient(0.5);
 
   EXPECT_EQ(i.gradient, 0.5f);

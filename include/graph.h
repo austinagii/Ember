@@ -48,7 +48,7 @@ struct Node {
 /**
  * Add two nodes and return a new node representing the sum.
  */
-Node add(Node& augend, Node& addend) {
+Node operator+(Node& augend, Node& addend) {
   auto sum = Node(augend.value + addend.value);
   sum.children.push_back(std::ref(augend));
   sum.children.push_back(std::ref(addend));
@@ -58,10 +58,11 @@ Node add(Node& augend, Node& addend) {
   return sum;
 }
 
+
 /**
  * Multiply two nodes and return a new node representing the product.
  */
-Node multiply(Node& multiplicand, Node& multiplier) {
+Node operator*(Node& multiplicand, Node& multiplier) {
   auto product = Node(multiplicand.value * multiplier.value);
   product.children.push_back(std::ref(multiplicand));
   product.children.push_back(std::ref(multiplier));
