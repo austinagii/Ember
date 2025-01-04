@@ -95,6 +95,24 @@ TEST(Node, BackpropagateThroughNestedMultiplicationOperation) {
   EXPECT_EQ(e.gradient, 2);
 }
 
+TEST(Node, Division) {
+  auto a = Node(10.0f);
+  auto b = Node(2.0f);
+  auto c = a / b;
+  EXPECT_EQ(c.value, 5.0f);
+
+  auto d = Node(2.0f);
+  auto e = c / d;
+  EXPECT_EQ(e.value, 2.5f);
+
+  e.compute_gradient(1.0);
+  EXPECT_EQ(a.gradient, 0.25f);
+  EXPECT_EQ(b.gradient, -1.25f);
+  EXPECT_EQ(c.gradient, 0.5f);
+  EXPECT_EQ(d.gradient, -1.25f);
+  EXPECT_EQ(e.gradient, 1.0f);
+}
+
 TEST(Node, BackpropagateThroughMultiplicationOperationHard) {
   auto a = Node(2.0f);
   auto b = Node(3.0f);

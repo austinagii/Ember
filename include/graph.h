@@ -84,5 +84,18 @@ Node operator*(Node& multiplicand, Node& multiplier) {
   return product;
 }
 
+/**
+ * Divides on node by another and return a node representing the quotient.
+ */
+Node operator/(Node& dividend, Node& divisor) {
+  auto quotient = Node(dividend.value / divisor.value);
+  quotient.children.push_back(std::ref(dividend));
+  quotient.children.push_back(std::ref(divisor));
+
+  dividend.grad_fn = [&divisor](float v) { return v / divisor.value; };
+  divisor.grad_fn = [&dividend, &divisor](float v) { return v * ((-dividend.value) / (divisor.value * divisor.value)); };
+  return quotient;
+}
+
 }
 #endif // GRAPH_H
