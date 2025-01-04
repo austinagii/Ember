@@ -10,7 +10,6 @@ TEST(Value, Addition) {
   auto b = Node(2.0);
   auto c = a + b;
 
-
   EXPECT_EQ(c.value, 5);
 }
 
@@ -39,6 +38,24 @@ TEST(Node, BackpropagateThroughNestedAdditionOperation) {
   EXPECT_EQ(c.gradient, 1.0);
   EXPECT_EQ(d.gradient, 1.0);
   EXPECT_EQ(e.gradient, 1.0);
+}
+
+TEST(Node, Subtraction) {
+  auto a = Node(3);
+  auto b = Node(2);
+  auto c = a - b;
+  EXPECT_EQ(c.value, 1);
+
+  auto d = Node(5);
+  auto e = c - d;
+  EXPECT_EQ(e.value, -4);
+
+  e.compute_gradient(1.1);
+  EXPECT_EQ(a.gradient, 1.1f);
+  EXPECT_EQ(b.gradient, 1.1f);
+  EXPECT_EQ(c.gradient, 1.1f);
+  EXPECT_EQ(d.gradient, 1.1f);
+  EXPECT_EQ(e.gradient, 1.1f);
 }
 
 TEST(Value, Multiplication) {

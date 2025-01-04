@@ -58,6 +58,18 @@ Node operator+(Node& augend, Node& addend) {
   return sum;
 }
 
+/**
+ * Subtract one node from another and return a new node representing the difference.
+ */
+Node operator-(Node& minuend, Node& subtrahend) {
+  auto sum = Node(minuend.value - subtrahend.value);
+  sum.children.push_back(std::ref(minuend));
+  sum.children.push_back(std::ref(subtrahend));
+
+  minuend.grad_fn = [](float v) { return v; };
+  subtrahend.grad_fn = [](float v) { return v; };
+  return sum;
+}
 
 /**
  * Multiply two nodes and return a new node representing the product.
