@@ -2,8 +2,10 @@
 
 ## Project Overview
 **Goal**: To create a fully functional library for building, training and visualizing neural networks.
-It aims to provide a simplified model of PyTorch's AutoGrad engine, with enough documentation that it can be useful for persons who really want to understand how the internals of automatic differentiation work. To make the transition from this repo to PyTorch's autograd implementation (found here: <include_link>), it maintains a very similar interface with only slight changes. </br>
-**Applications**: Mostly for facilitating a better understanding of neural networks and how they are trained. </br>
+It aims to provide a simplified model of PyTorch's AutoGrad engine, with enough documentation that it can be useful for persons who really want to understand how the internals of automatic differentiation work. To make the transition from this repo to PyTorch's autograd implementation (found [here](https://github.com/pytorch/pytorch/tree/main/torch/csrc/autograd)), it maintains a very similar interface with only slight changes. 
+</br></br>
+**Applications**: Mostly for facilitating a better understanding of neural networks and how they are trained. 
+</br></br>
 **Approach**: Builds a DAG representing the network as a computational graph and uses reverse mode automatic differentiation to compute the gradient of the loss w.r.t to each input.
 
 ## Log Entries
