@@ -10,6 +10,38 @@ It aims to provide a simplified model of PyTorch's AutoGrad engine, with enough 
 
 ## Log Entries
 
+### January 10, 2025
+- **Task**: Re-implement the arithmetic operations using the new Node and Tensor classes
+- **Progress**:  
+  - Added support for addition, subtraction and division
+- **Next Steps**:  
+  - Compare the current implementation with PyTorch's implementation
+
+### January 7-8, 2025
+- **Task**: Implement gradient accumulator based on PyTorch's autograd review
+- **Progress**:  
+  - Implemented gradient accumulator and tested with improved mul operator
+- **Notes & Challenges**: 
+  - Circular dependency between Node and Tensor structs caused some headaches
+  - Returning an empty tensor vector from the gradient accumulator is a temporary solution
+- **Next Steps**:  
+  - Implement remaining arithmetic operations
+
+### January 5-6, 2025
+- **Task**: Review and implement core PyTorch autograd concepts
+- **Progress**:  
+  - Implemented Node and Tensor classes
+  - Converted existing ops' backward functions to `Node`s
+  - Started implementing autograd's `Engine` class
+  - Studied torch::autograd::Engine::evaluate_function for gradient handling
+- **Notes & Challenges**: 
+  - Found [this discussion](https://dev-discuss.pytorch.org/t/how-to-read-the-autograd-codebase/383?utm_source=chatgpt.com) to be very helpful
+  - Learned key concepts:
+    - Leaf tensor gradients are captured in an accumulator
+    - Internal function gradients are captured in a gradient buffer
+- **Next Steps**:  
+  - Implement gradient accumulator
+
 ### January 4, 2025
 - **Task**: Add support for division and subtraction 
 - **Progress**:  
