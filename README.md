@@ -51,24 +51,37 @@ If you're a curious person and want to understand the “magic” behind machine
 #### Example
 
 ```cpp
-nclude "ember.h"
+#include <ember/tensor.h>
 
 int main() {
-    // Create nodes
-    Node a(5.0); 
-    Node b(3.0);
+    // Create tensors
+    Tensor a(3.0f);
+    Tensor b(2.0f);
+    Tensor c(4.0f);
 
     // Perform operations
-    Node c = multiply(a, b);
+    auto d = (a * b + c) / (a - b);
+    // d = (3 * 2 + 4) / (3 - 2) = 10 / 1 = 10
+    std::cout << "Result: " << d.value << std::endl;
 
     // Backpropagate to compute gradients
-    c.backward(); 
+    d.backward();
     
     // Access gradients
-    std::cout << "Gradient of a: " << a.grad << std::endl;
+    std::cout << "Gradient of a: " << a.gradient->value << std::endl;
+    std::cout << "Gradient of b: " << b.gradient->value << std::endl;
+    std::cout << "Gradient of c: " << c.gradient->value << std::endl;
 
     return 0;
 }
+```
+
+Output:
+```
+Result: 10
+Gradient of a: -8
+Gradient of b: 12
+Gradient of c: 1
 ```
 
 ## What’s Next for Ember?
