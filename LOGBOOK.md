@@ -1,4 +1,4 @@
-# Project Logbook: HyperGrad
+# Project Logbook: Ember
 
 ## Project Overview
 **Goal**: To create a fully functional library for building, training and visualizing neural networks.
