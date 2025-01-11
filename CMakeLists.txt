@@ -29,6 +29,7 @@ set(EMBER_TESTS
   tests/ember/ops/test_mul.cpp
   tests/ember/ops/test_div.cpp
   tests/ember/ops/test_sub.cpp
+  tests/ember/test_tensor.cpp
 )
 
 # Test executable

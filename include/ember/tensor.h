@@ -4,13 +4,15 @@
 #include <ember/autograd/node.h>
 #include <ember/autograd/engine.h>
 #include <ember/autograd/accumulator.h>
-
 #include <ember/ops/add.h>
 #include <ember/ops/sub.h>
 #include <ember/ops/mul.h>
 #include <ember/ops/div.h>
 
 namespace ember {
+
+// Forward declare TensorSnapshot
+struct TensorSnapshot;
 
 /**
 * This class corresponds to the `Variable` class in PyTorch's autograd, the
@@ -31,8 +33,16 @@ struct Tensor {
   Tensor(float value);
   void backward(); 
   autograd::Node* get_gradient_edge();
+  TensorSnapshot save();
 
 }; // struct Tensor
+
+
+struct TensorSnapshot {
+  float value;
+
+  TensorSnapshot(const Tensor* tensor);
+}; // TensorSnapshot
 
 } // namespace ember
 

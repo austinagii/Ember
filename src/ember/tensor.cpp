@@ -1,6 +1,7 @@
 #include <ember/tensor.h>
-#include <ember/autograd/node.h>
+#include <ember/autograd/node.h> // Can this be removed?
 
+#include <utility>
 
 namespace ember {
   
@@ -25,5 +26,11 @@ autograd::Node* Tensor::get_gradient_edge() {
   }
   return gradient_accumulator;
 }
+
+TensorSnapshot Tensor::save() {
+  return std::move(TensorSnapshot(this));
+}
+
+TensorSnapshot::TensorSnapshot(const Tensor* tensor): value(tensor->value) {}
 
 } // namespace ember
