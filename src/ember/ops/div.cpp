@@ -24,17 +24,20 @@ Tensor operator/(Tensor&& dividend, Tensor&& divisor) {
     return divide_tensors(dividend, divisor);
 }
 
-DivBackward::DivBackward(Tensor& dividend, Tensor& divisor): 
-    dividend(dividend), 
-    divisor(divisor) 
-{
+DivBackward::DivBackward(Tensor& dividend, Tensor& divisor) {
+    saved_tensors.push_back(dividend.save());
+    saved_tensors.push_back(divisor.save());
+
     next_fns.push_back(dividend.get_gradient_edge());
     next_fns.push_back(divisor.get_gradient_edge());
 }
 
 std::vector<Tensor> DivBackward::operator()(Tensor output_grad) {
-    auto dividend_grad = Tensor(output_grad.value / divisor.value);
-    auto divisor_grad = Tensor(output_grad.value * (-dividend.value) / (divisor.value * divisor.value));
+    auto dividend = saved_tensors[0].value;
+    auto divisor = saved_tensors[1].value;
+
+    auto dividend_grad = Tensor(output_grad.value / divisor);
+    auto divisor_grad = Tensor(output_grad.value * (-dividend / (divisor * divisor)));
     return {dividend_grad, divisor_grad};
 }
 

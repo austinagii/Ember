@@ -2,17 +2,19 @@
 #define NODE_H 
 
 #include <vector>
+#include <ember/tensor_snapshot.h>
 
 namespace ember {
-    struct Tensor;  // Forward declaration only
+    struct Tensor;  // Only need forward declaration for Tensor now
 }
 
 namespace ember::autograd {
 
 struct Node {
     std::vector<Node*> next_fns;
+    std::vector<TensorSnapshot> saved_tensors;
     virtual std::vector<ember::Tensor> operator()(ember::Tensor output_grad) = 0;
-    virtual ~Node() = default;  // Add virtual destructor for proper cleanup
+    virtual ~Node() = default;
 };
 
 } // namespace ember::autograd

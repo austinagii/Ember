@@ -21,10 +21,6 @@ Tensor operator/(Tensor&& dividend, Tensor&& divisor);
 struct DivBackward: public autograd::Node {
     DivBackward(Tensor& dividend, Tensor& divisor);
     std::vector<Tensor> operator()(Tensor output_grad) override;
-
-private:
-    Tensor& dividend;
-    Tensor& divisor;
 }; // struct DivBackward
 
 } // namespace ember

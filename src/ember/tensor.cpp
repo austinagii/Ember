@@ -28,9 +28,9 @@ autograd::Node* Tensor::get_gradient_edge() {
 }
 
 TensorSnapshot Tensor::save() {
-  return std::move(TensorSnapshot(this));
+  return TensorSnapshot(this);
 }
 
-TensorSnapshot::TensorSnapshot(const Tensor* tensor): value(tensor->value) {}
+TensorSnapshot::TensorSnapshot(Tensor* tensor): value(tensor->value) {}
 
 } // namespace ember

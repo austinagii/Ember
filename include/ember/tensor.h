@@ -8,6 +8,7 @@
 #include <ember/ops/sub.h>
 #include <ember/ops/mul.h>
 #include <ember/ops/div.h>
+#include <ember/tensor_snapshot.h>
 
 namespace ember {
 
@@ -29,20 +30,12 @@ struct Tensor {
   // Accumulates a sum of gradients for this tensor if it is a leaf tensor.
   autograd::Node* gradient_accumulator = nullptr;
 
-  Tensor();
-  Tensor(float value);
-  void backward(); 
-  autograd::Node* get_gradient_edge();
-  TensorSnapshot save();
-
+    Tensor();
+    Tensor(float value);
+    void backward();
+    autograd::Node* get_gradient_edge();
+    TensorSnapshot save();
 }; // struct Tensor
-
-
-struct TensorSnapshot {
-  float value;
-
-  TensorSnapshot(const Tensor* tensor);
-}; // TensorSnapshot
 
 } // namespace ember
 

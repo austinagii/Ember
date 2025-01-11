@@ -21,10 +21,6 @@ Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier);
 struct MulBackward: public autograd::Node {
     MulBackward(Tensor& multiplicand, Tensor& multiplier);
     std::vector<Tensor> operator()(Tensor output_grad) override;
-
-private:
-    Tensor& multiplicand;
-    Tensor& multiplier;
 }; // struct MulBackward
 
 } // namespace ember
