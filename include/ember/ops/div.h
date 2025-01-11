@@ -1,5 +1,5 @@
-#ifndef DIV_H
-#define DIV_H
+#ifndef EMBER_OPS_DIV_H
+#define EMBER_OPS_DIV_H
 
 #include <vector>
 
@@ -29,4 +29,4 @@ private:
 
 } // namespace ember
 
-#endif // DIV_H
+#endif // EMBER_OPS_DIV_H

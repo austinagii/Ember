@@ -1,5 +1,5 @@
-#ifndef SUB_H
-#define SUB_H
+#ifndef EMBER_OPS_SUB_H
+#define EMBER_OPS_SUB_H
 
 #include <vector>
 
@@ -22,4 +22,4 @@ struct SubBackward: public autograd::Node {
 
 } // namespace ember
 
-#endif // SUB_H
+#endif // EMBER_OPS_SUB_H

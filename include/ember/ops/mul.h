@@ -1,5 +1,5 @@
-#ifndef MUL_H
-#define MUL_H
+#ifndef EMBER_OPS_MUL_H
+#define EMBER_OPS_MUL_H
 
 #include <vector>
 
@@ -29,4 +29,4 @@ private:
 
 } // namespace ember
 
-#endif // MUL_H 
+#endif // EMBER_OPS_MUL_H 

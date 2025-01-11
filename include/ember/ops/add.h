@@ -1,3 +1,6 @@
+#ifndef EMBER_OPS_ADD_H
+#define EMBER_OPS_ADD_H
+
 #include <ember/autograd/node.h>
 #include <ember/tensor.h>
 
@@ -23,4 +26,6 @@ struct AddBackward: public autograd::Node {
 
 };
 
-} // namespace ember::ops
+} // namespace ember
+
+#endif // EMBER_OPS_ADD_H

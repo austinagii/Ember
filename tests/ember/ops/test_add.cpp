@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 
-#include <ember/ops/add.h>
 #include <ember/tensor.h>
 
 using namespace ember;

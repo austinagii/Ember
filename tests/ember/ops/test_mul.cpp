@@ -1,5 +1,4 @@
 #include <ember/tensor.h>
-#include <ember/ops/mul.h>
 
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>

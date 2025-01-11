@@ -5,7 +5,10 @@
 #include <ember/autograd/engine.h>
 #include <ember/autograd/accumulator.h>
 
-// TODO: Include operation headers here to allow for including tensor w/ operations.
+#include <ember/ops/add.h>
+#include <ember/ops/sub.h>
+#include <ember/ops/mul.h>
+#include <ember/ops/div.h>
 
 namespace ember {
 
