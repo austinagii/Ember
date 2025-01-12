@@ -17,6 +17,7 @@ set(EMBER_SOURCES
   src/ember/tensor.cpp
   src/ember/autograd/accumulator.cpp
   src/ember/autograd/engine.cpp
+  # src/ember/autograd/edge.cpp
   src/ember/ops/mul.cpp
   src/ember/ops/add.cpp
   src/ember/ops/div.cpp

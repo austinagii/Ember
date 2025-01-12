@@ -28,8 +28,8 @@ Tensor operator+(Tensor&& augend, Tensor&& addend) {
 }
 
 AddBackward::AddBackward(Tensor& augend, Tensor& addend) {
-  this->next_fns.push_back(augend.get_gradient_edge());
-  this->next_fns.push_back(addend.get_gradient_edge());
+  edges.push_back(autograd::Edge(0, augend.get_gradient_edge()));
+  edges.push_back(autograd::Edge(1, addend.get_gradient_edge()));
 }
 
 std::vector<Tensor> AddBackward::operator()(Tensor output_grad) {

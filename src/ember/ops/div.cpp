@@ -28,8 +28,8 @@ DivBackward::DivBackward(Tensor& dividend, Tensor& divisor) {
     saved_tensors.push_back(dividend.save());
     saved_tensors.push_back(divisor.save());
 
-    next_fns.push_back(dividend.get_gradient_edge());
-    next_fns.push_back(divisor.get_gradient_edge());
+    edges.push_back(autograd::Edge(0, dividend.get_gradient_edge()));
+    edges.push_back(autograd::Edge(1, divisor.get_gradient_edge()));
 }
 
 std::vector<Tensor> DivBackward::operator()(Tensor output_grad) {

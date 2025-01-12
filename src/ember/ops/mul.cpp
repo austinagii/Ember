@@ -33,8 +33,8 @@ MulBackward::MulBackward(Tensor& multiplicand, Tensor& multiplier) {
     saved_tensors.push_back(multiplicand.save());
     saved_tensors.push_back(multiplier.save());
 
-    next_fns.push_back(multiplicand.get_gradient_edge());
-    next_fns.push_back(multiplier.get_gradient_edge());
+    edges.push_back(autograd::Edge(0, multiplicand.get_gradient_edge()));
+    edges.push_back(autograd::Edge(1, multiplier.get_gradient_edge()));
 }
 
 std::vector<Tensor> MulBackward::operator()(Tensor output_grad) {

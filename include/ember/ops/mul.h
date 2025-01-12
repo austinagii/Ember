@@ -1,5 +1,5 @@
-#ifndef EMBER_OPS_MUL_H
-#define EMBER_OPS_MUL_H
+#ifndef MUL_H
+#define MUL_H
 
 #include <vector>
 
@@ -25,4 +25,4 @@ struct MulBackward: public autograd::Node {
 
 } // namespace ember
 
-#endif // EMBER_OPS_MUL_H 
+#endif // MUL_H 

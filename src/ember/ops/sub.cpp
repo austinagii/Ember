@@ -25,8 +25,8 @@ Tensor operator-(Tensor&& minuend, Tensor&& subtrahend) {
 }
 
 SubBackward::SubBackward(Tensor& minuend, Tensor& subtrahend) {
-    next_fns.push_back(minuend.get_gradient_edge());
-    next_fns.push_back(subtrahend.get_gradient_edge());
+    edges.push_back(autograd::Edge(0, minuend.get_gradient_edge()));
+    edges.push_back(autograd::Edge(1, subtrahend.get_gradient_edge()));
 }
 
 std::vector<Tensor> SubBackward::operator()(Tensor output_grad) {

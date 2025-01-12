@@ -5,20 +5,15 @@
 namespace ember::autograd {
 
 void Engine::evaluate_fn(Node* func, Tensor output_grad) {
-  if (func == nullptr) {
-    return;
-  }
-
   std::vector<Tensor> input_grads = (*func)(output_grad);
-  if (input_grads.size() == 0) {
-    return; // no gradients to propagate e.g. accumulator
+
+  if (input_grads.size() != func->get_num_inputs()) {
+    throw std::runtime_error("Number of input gradients does not match number of inputs");
   }
 
-  if (input_grads.size() != func->next_fns.size()) {
-    // TODO: Throw an appropriate error here.
-  }
-  for (std::size_t i = 0; i < func->next_fns.size(); i++) {
-    evaluate_fn(func->next_fns[i], input_grads[i]);
+  for (std::size_t i = 0; i < func->edges.size(); i++) {
+    Edge edge = func->edges[i];
+    evaluate_fn(edge.fn, input_grads[edge.input_nr]);
   }
 }
 
