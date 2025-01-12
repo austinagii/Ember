@@ -1,22 +1,38 @@
 # Project Logbook
 
-## Log Entries
-
-### January 11, 2025
-- **Task**: Re-implement the arithmetic operations using the new Node and Tensor classes
+## January 11 - 12, 2025
+- **Task**: Compare the current implementation of ember with PyTorch's autograd implementation
 - **Progress**:  
-  - Simplify tensor usage by including tensor operations with tensor headers
+  - Simplified tensor usage by including tensor operations with tensor headers
+  - Implemented `TensorCheckpoint` struct to record input values for backprop
+  - Updated backward pass of multiplication and division to use checkpoints instead of referencing the original tensor 
+  - Implemented `Edge` struct to represent the relationship between nodes in the graph
+  - Implemented topological sort of the graph for backprop and eliminated the need for recursion
+  - Implemented gradient buffers for intermediate functions in the graph
+- **Notes & Challenges**: 
+  - With the recent change it's no longer possible to get the gradient for intermediate functions in the graph, may need an additional mechanism to get the gradient for intermediate functions, throws a segfault. (Torch handles this by using hooks through retain_grad)
+  - With the introduction of topsort and gradient buffers, it is now possible to handle multiple parents for intermediate functions in comp graph. For example:
+    ```c++
+    Tensor a = ember::Tensor(10);
+    Tensor b = ember::Tensor(10);
+    Tensor c = a + b;
+    Tensor d = (c + 5) + (c + 5);
+    d.backward();
+    ```
+    In this case c has two parents, the first `c + 5` and the second `c + 5`
 - **Next Steps**:  
-  - 
+  - Find an alternative to returning empty tensor in accumulator call function 
+  - Add log and power operations 
+  - Handle segfaults when trying to get the gradient for intermediate functions
 
-### January 10, 2025
+## January 10, 2025
 - **Task**: Re-implement the arithmetic operations using the new Node and Tensor classes
 - **Progress**:  
   - Added support for addition, subtraction and division
 - **Next Steps**:  
   - Compare the current implementation with PyTorch's implementation
 
-### January 7-8, 2025
+## January 7-8, 2025
 - **Task**: Implement gradient accumulator based on PyTorch's autograd review
 - **Progress**:  
   - Implemented gradient accumulator and tested with improved mul operator
@@ -26,7 +42,7 @@
 - **Next Steps**:  
   - Implement remaining arithmetic operations
 
-### January 5-6, 2025
+## January 5-6, 2025
 - **Task**: Review and implement core PyTorch autograd concepts
 - **Progress**:  
   - Implemented Node and Tensor classes
@@ -41,7 +57,7 @@
 - **Next Steps**:  
   - Implement gradient accumulator
 
-### January 4, 2025
+## January 4, 2025
 - **Task**: Add support for division and subtraction 
 - **Progress**:  
   - Swapped out the named functions with operator overloads to simplify the interface. After reviewing PyTorch's implementation though this _may_ change.
@@ -55,7 +71,7 @@
   - Cosolidate tests for add and multiply operations.
   - Add support for operations on tensors.
 
-### January 2, 2025
+## January 2, 2025
 - **Task**: Add support for multiplication and improve gradient calculation.
 - **Progress**:  
   - Added the `mul` method to calculate the product of two nodes.
@@ -66,7 +82,7 @@
   - Add support for division and subtraction 
   - Add support for operations on tensors
 
-### January 1, 2025
+## January 1, 2025
 - **Task**: Compute the gradient for each node in a given graph.
 - **Progress**:  
   - Simplified the original classes to just one `Node` class which stores the value, the gradient and any children
@@ -77,7 +93,7 @@
   - Add support for multiplication 
   - Improve the gradient calculation implementation
 
-### Dec 31, 2025
+## Dec 31, 2025
 - **Task**: Create a computational graph from addition operations and compute the result.
 - **Progress**:  
   - Implemented `Value` and `Operation` classes which inherit from a base `Node` class with basic support for addition 

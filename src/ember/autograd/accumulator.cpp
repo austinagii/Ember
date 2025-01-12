@@ -2,6 +2,7 @@
 #include <ember/autograd/accumulator.h>
 
 #include <stdexcept>
+#include <iostream>
 
 namespace ember::autograd {
 
@@ -16,6 +17,7 @@ std::vector<Tensor> Accumulator::operator()(Tensor output_grad) {
     target->gradient = new Tensor(0.0f);
   }
   target->gradient->value += output_grad.value;
+  
   return {};
 }
 
