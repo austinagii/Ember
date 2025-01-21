@@ -35,7 +35,7 @@ set(EMBER_SOURCES
   src/ember/ops/add.cpp
   src/ember/ops/sub.cpp
   src/ember/ops/mul.cpp
-  # src/ember/ops/div.cpp
+  src/ember/ops/div.cpp
 )
 
 # Test files
@@ -43,7 +43,7 @@ set(EMBER_TESTS
   tests/ember/ops/test_sub.cpp
   tests/ember/ops/test_add.cpp
   tests/ember/ops/test_mul.cpp
-  # tests/ember/ops/test_div.cpp
+  tests/ember/ops/test_div.cpp
 )
 
 # Test executable

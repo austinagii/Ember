@@ -7,7 +7,7 @@
 #include <ember/ops/add.h>
 #include <ember/ops/sub.h>
 #include <ember/ops/mul.h>
-// #include <ember/ops/div.h>
+#include <ember/ops/div.h>
 #include <ember/tensor_snapshot.h>
 
 #include <xtensor/xadapt.hpp>
