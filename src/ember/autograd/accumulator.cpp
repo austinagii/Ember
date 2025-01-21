@@ -16,7 +16,6 @@ std::vector<Tensor> Accumulator::operator()(Tensor output_grad) {
   if (target->gradient == nullptr) {
     target->gradient = new Tensor(0.0f);
   }
-  target->gradient->value += output_grad.value;
   target->gradient->data += output_grad.data;
   
   return {};

@@ -5,15 +5,14 @@
 #include <xtensor/xbroadcast.hpp>
 #include <xtensor/xbuilder.hpp>
 
-std::size_t AUGEND_INDEX = 0;
-std::size_t ADDEND_INDEX = 1;
-
 
 namespace ember {
 
+std::size_t AUGEND_INDEX = 0;
+std::size_t ADDEND_INDEX = 1;
+
 static Tensor add_tensors(Tensor& augend, Tensor& addend) {
-  Tensor sum;
-  sum.data = xt::eval(augend.data + addend.data);
+  Tensor sum = xt::eval(augend.data + addend.data);
   auto gradient_fn = new AddBackward(augend, addend);
   gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
                                     {augend.save(), addend.save()});
@@ -42,15 +41,6 @@ AddBackward::AddBackward(Tensor& augend, Tensor& addend) {
   edges.push_back(autograd::Edge(1, addend.get_gradient_edge()));
 }
 
-std::vector<Tensor> AddBackward::operator()(Tensor output_grad) {
-  auto augend = saved_tensors[AUGEND_INDEX];
-  auto addend = saved_tensors[ADDEND_INDEX];
-
-  auto augend_gradient = calculate_local_gradient(augend.data, output_grad.data);
-  auto addend_gradient = calculate_local_gradient(addend.data, output_grad.data);
-  return {Tensor(augend_gradient), Tensor(addend_gradient)};
-}
-
 /**
  * Caclulate the partial derivative of `input` w.r.t. `output` for an addition operation.
  *
@@ -60,7 +50,7 @@ std::vector<Tensor> AddBackward::operator()(Tensor output_grad) {
  * multiplied by the identity matrix with the same shape as the input to produce `input`'s 
  * gradient tensor. 
  */
-xt::xarray<float> calculate_local_gradient(xt::xarray<float> input, xt::xarray<float> output_grad) {
+xt::xarray<float> calculate_local_add_gradient(xt::xarray<float> input, xt::xarray<float> output_grad) {
   auto input_shape = input.shape();
   auto input_rank = input_shape.size();
   auto output_shape = output_grad.shape();
@@ -74,12 +64,21 @@ xt::xarray<float> calculate_local_gradient(xt::xarray<float> input, xt::xarray<f
 
   auto input_grad = output_grad;  // This needs to be a copy.
   for (auto i = 0; i < output_rank; i++) {
-    if (input_shape[i] != output_shape[i]) {
+    if (padded_input_shape[i] != output_shape[i]) {
       // we must collapse along this dimension.
       input_grad = xt::sum(input_grad, i);
     }
   }
   return input_grad;
+}
+
+std::vector<Tensor> AddBackward::operator()(Tensor output_grad) {
+  auto augend = saved_tensors[AUGEND_INDEX];
+  auto addend = saved_tensors[ADDEND_INDEX];
+
+  auto augend_gradient = calculate_local_add_gradient(augend.data, output_grad.data);
+  auto addend_gradient = calculate_local_add_gradient(addend.data, output_grad.data);
+  return {Tensor(augend_gradient), Tensor(addend_gradient)};
 }
 
 }

@@ -7,7 +7,7 @@
 #include <ember/ops/add.h>
 #include <ember/ops/sub.h>
 #include <ember/ops/mul.h>
-#include <ember/ops/div.h>
+// #include <ember/ops/div.h>
 #include <ember/tensor_snapshot.h>
 
 #include <xtensor/xadapt.hpp>
@@ -31,8 +31,6 @@ struct TensorSnapshot;
 */
 struct Tensor {
   xt::xarray<float> data;
-  // The current value of this tensor. Only scalar values are currently supported. 
-  float value;  
   // The gradient of this node w.r.t. the ancestor on which backward was called.
   Tensor* gradient = nullptr;
   // The function that will be used to pass the gradient from this tensor to it's parents.
@@ -41,19 +39,11 @@ struct Tensor {
   autograd::Node* gradient_accumulator = nullptr;
 
   Tensor();
-  Tensor(float value);
   Tensor(xt::xarray<float> data);
   
   void backward();
   autograd::Node* get_gradient_edge();
   TensorSnapshot save();
-
-private:
-  template <typename T>
-  static std::vector<size_t> get_shape(std::initializer_list<T> init);
-  
-  template <typename T>
-  static void flatten(std::initializer_list<T> init, std::vector<float>& dest);
 }; // struct Tensor
 
 } // namespace ember

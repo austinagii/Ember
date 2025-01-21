@@ -10,13 +10,6 @@
 namespace ember {
 
 Tensor::Tensor(): 
-  value(0.0f),
-  gradient(nullptr), 
-  gradient_fn(nullptr), 
-  gradient_accumulator(nullptr) {}
-
-Tensor::Tensor(float value): 
-  value(value), 
   gradient(nullptr), 
   gradient_fn(nullptr), 
   gradient_accumulator(nullptr) {}
@@ -31,7 +24,6 @@ void Tensor::backward() {
   // Create engine instance for this backward pass
   autograd::Engine engine;
   Tensor gradient;
-  gradient.value = 1.0f;
   gradient.data = xt::ones_like(this->data);
   engine.grad_buffer[gradient_fn] = gradient; 
 

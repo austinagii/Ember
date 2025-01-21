@@ -26,8 +26,6 @@ struct AddBackward: public autograd::Node {
   virtual std::vector<Tensor> operator()(Tensor output_grad); 
 };
 
-xt::xarray<float> calculate_local_gradient(xt::xarray<float> input, xt::xarray<float> output);
-
 } // namespace ember
 
 #endif // EMBER_OPS_ADD_H

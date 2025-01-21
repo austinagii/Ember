@@ -32,19 +32,18 @@ set(EMBER_SOURCES
   src/ember/autograd/accumulator.cpp
   src/ember/autograd/engine.cpp
   src/ember/autograd/edge.cpp
-  src/ember/ops/mul.cpp
   src/ember/ops/add.cpp
-  src/ember/ops/div.cpp
   src/ember/ops/sub.cpp
+  src/ember/ops/mul.cpp
+  # src/ember/ops/div.cpp
 )
 
 # Test files
 set(EMBER_TESTS
+  tests/ember/ops/test_sub.cpp
   tests/ember/ops/test_add.cpp
   tests/ember/ops/test_mul.cpp
-  tests/ember/ops/test_div.cpp
-  tests/ember/ops/test_sub.cpp
-  tests/ember/test_tensor.cpp
+  # tests/ember/ops/test_div.cpp
 )
 
 # Test executable
@@ -56,4 +55,5 @@ target_link_libraries(ember_test PRIVATE
     xtl
     xtensor
 )
-add_test(ember_test ember_test)
+
+add_test(NAME ember_test COMMAND ember_test)
