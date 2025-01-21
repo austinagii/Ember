@@ -1,11 +1,14 @@
 #ifndef TENSOR_SNAPSHOT_H
 #define TENSOR_SNAPSHOT_H
 
+#include <xtensor/xarray.hpp>
+
 namespace ember {
     struct Tensor;  // Forward declaration
 
     struct TensorSnapshot {
         float value;
+        xt::xarray<float> data;
         TensorSnapshot(Tensor* tensor);
     };
 } // namespace ember

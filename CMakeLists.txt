@@ -10,14 +10,28 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/google/googletest.git
   GIT_TAG        v1.15.2
 )
-FetchContent_MakeAvailable(gtest)
+
+FetchContent_Declare(
+  xtl
+  GIT_REPOSITORY https://github.com/xtensor-stack/xtl.git
+  GIT_TAG        0.7.7
+)
+
+FetchContent_Declare(
+  xtensor
+  GIT_REPOSITORY https://github.com/xtensor-stack/xtensor.git
+  GIT_TAG       0.25.0
+)
+
+FetchContent_MakeAvailable(gtest xtl xtensor)
 
 # Source files
 set(EMBER_SOURCES
   src/ember/tensor.cpp
+  src/ember/tensor_snapshot.cpp
   src/ember/autograd/accumulator.cpp
   src/ember/autograd/engine.cpp
-  # src/ember/autograd/edge.cpp
+  src/ember/autograd/edge.cpp
   src/ember/ops/mul.cpp
   src/ember/ops/add.cpp
   src/ember/ops/div.cpp
@@ -36,5 +50,10 @@ set(EMBER_TESTS
 # Test executable
 add_executable(ember_test ${EMBER_TESTS} ${EMBER_SOURCES})
 target_include_directories(ember_test PRIVATE include)
-target_link_libraries(ember_test PRIVATE gtest_main gmock_main)
+target_link_libraries(ember_test PRIVATE 
+    gtest_main 
+    gmock_main
+    xtl
+    xtensor
+)
 add_test(ember_test ember_test)

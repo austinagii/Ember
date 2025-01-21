@@ -7,18 +7,34 @@
 #include <functional>
 #include <iostream>
 
-
 namespace ember {
-  
-Tensor::Tensor(): value(0.0f), gradient(nullptr), gradient_fn(nullptr), gradient_accumulator(nullptr) {}
 
-Tensor::Tensor(float value): value(value), gradient(nullptr), gradient_fn(nullptr), gradient_accumulator(nullptr) {}
+Tensor::Tensor(): 
+  value(0.0f),
+  gradient(nullptr), 
+  gradient_fn(nullptr), 
+  gradient_accumulator(nullptr) {}
+
+Tensor::Tensor(float value): 
+  value(value), 
+  gradient(nullptr), 
+  gradient_fn(nullptr), 
+  gradient_accumulator(nullptr) {}
+
+Tensor::Tensor(xt::xarray<float> data): 
+  data(data), 
+  gradient(nullptr), 
+  gradient_fn(nullptr), 
+  gradient_accumulator(nullptr) {}
 
 void Tensor::backward() {
-  
   // Create engine instance for this backward pass
   autograd::Engine engine;
-  engine.grad_buffer[gradient_fn] = Tensor(1.0f);
+  Tensor gradient;
+  gradient.value = 1.0f;
+  gradient.data = xt::ones_like(this->data);
+  engine.grad_buffer[gradient_fn] = gradient; 
+
   // Perform topological sort
   std::vector<autograd::Node*> topo_order;
   std::unordered_set<autograd::Node*> visited;
@@ -59,7 +75,5 @@ autograd::Node* Tensor::get_gradient_edge() {
 TensorSnapshot Tensor::save() {
   return TensorSnapshot(this);
 }
-
-TensorSnapshot::TensorSnapshot(Tensor* tensor): value(tensor->value) {}
 
 } // namespace ember

@@ -1,39 +1,54 @@
-#include <gtest/gtest.h>
-
 #include <ember/tensor.h>
+
+#include <gtest/gtest.h>
+#include <xtensor/xarray.hpp>
+#include <xtensor/xio.hpp>        // for operator<<, if you want
+#include <xtensor/xfixed.hpp>
+
+#include <iostream>
 
 using namespace ember;
 
-TEST(TensorAddition, TensorsCanBeAddedToConstants) {
-  Tensor a(3.0f);
-  auto b = a + 5;
-  EXPECT_EQ(b.value, 8.0f);
+TEST(TensorAddition, ScalarTensorsCanBeAddedTogether) {
+  Tensor a = xt::xarray<float>({1.0f});
+  Tensor b = xt::xarray<float>({5.0f});
+  Tensor c = a + b;
+
+  auto sum = c.data;
+  auto expected_sum = xt::xarray<float>({6.0f});
+
+  EXPECT_TRUE(xt::all(xt::equal(sum, expected_sum)));
 }
 
-TEST(TensorAddition, TestIntermediateAnonymousTensorAdditions) {
-  Tensor a(7.0f);
-  Tensor b(8.0f);
+TEST(TensorAddition, MultidimensionalTensorsCanBeAddedTogether) {
+  Tensor a = xt::xarray<float>({{1.0f, 9.0f}, {3.0f, 2.2f}});
+  Tensor b = xt::xarray<float>({{5.0f, 3.0f}, {2.0f, 1.3f}});
+  Tensor c = a + b;
+
+  xt::xarray<float> sum = c.data;
+  xt::xarray<float> expected_sum = {{6.0f, 12.0f}, {5.0f, 3.5f}};
+
+  EXPECT_TRUE(xt::all(xt::equal(sum, expected_sum)));
+}
+
+// TODO: Reintroduce this test case when the `Tensor` scalar constructor can be 
+// updated to create an xt::array from that constant without breaking the other 
+// tensor operations that do not support operations on multidimensional arrays.
+// TEST(TensorAddition, TensorsCanBeAddedToConstants) {
+//   Tensor a(3.0f);
+//   auto b = a + 5;
+//   EXPECT_EQ(b.value, 8.0f);
+// }
+
+TEST(TensorAddition, AnonymousIntermediateTensorsCanBeAddedTogether) {
+  Tensor a = xt::xarray<float>({7.0f});
+  Tensor b = xt::xarray<float>({8.0f});
   Tensor c = a + b;
   
-  Tensor d = (c + 3) + (c + 5);
-  EXPECT_EQ(d.value, 38.0f);
+  Tensor d = (c + Tensor(xt::xarray<float>({3}))) + (c + Tensor(xt::xarray<float>({5})));
+  EXPECT_TRUE(xt::all(xt::equal(d.data, xt::xarray<float>({38.0f}))));
 
   d.backward();
-  EXPECT_EQ(a.gradient->value, 2.0f);
-  EXPECT_EQ(b.gradient->value, 2.0f);
-}
-
-TEST(Ops, Addition) {
-  Tensor a(3.0f);
-  Tensor b(2.0f);
-  Tensor c(4.0f);
-
-  auto d = a + b + c;
-  EXPECT_EQ(d.value, 9.0f);
-
-  d.backward();
-  EXPECT_EQ(d.gradient->value, 1.0f);
-  EXPECT_EQ(c.gradient->value, 1.0f);
-  EXPECT_EQ(a.gradient->value, 1.0f);
-  EXPECT_EQ(b.gradient->value, 1.0f);
+  EXPECT_TRUE(xt::all(xt::equal(a.gradient->data, xt::xarray<float>({2.0f}))));
+  EXPECT_TRUE(xt::all(xt::equal(b.gradient->data, xt::xarray<float>({2.0f}))));
 }

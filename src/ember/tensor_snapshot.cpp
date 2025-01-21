@@ -3,6 +3,6 @@
 
 namespace ember {
 
-TensorSnapshot::TensorSnapshot(const Tensor* tensor): value(tensor->value) {}
+TensorSnapshot::TensorSnapshot(Tensor* tensor): value(tensor->value), data(tensor->data) {}
 
 } // namespace ember 

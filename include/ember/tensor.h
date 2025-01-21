@@ -1,5 +1,5 @@
-#ifndef TENSOR_H
-#define TENSOR_H
+#ifndef EMBER_TENSOR_H
+#define EMBER_TENSOR_H
 
 #include <ember/autograd/node.h>
 #include <ember/autograd/engine.h>
@@ -9,6 +9,15 @@
 #include <ember/ops/mul.h>
 #include <ember/ops/div.h>
 #include <ember/tensor_snapshot.h>
+
+#include <xtensor/xadapt.hpp>
+#include <xtensor/xarray.hpp>
+
+#include <initializer_list>
+#include <numeric>  
+#include <functional>  
+#include <vector>
+#include <type_traits>
 
 namespace ember {
 
@@ -21,6 +30,7 @@ struct TensorSnapshot;
 * in intended to be deprecated in favor of the current naming. 
 */
 struct Tensor {
+  xt::xarray<float> data;
   // The current value of this tensor. Only scalar values are currently supported. 
   float value;  
   // The gradient of this node w.r.t. the ancestor on which backward was called.
@@ -30,13 +40,22 @@ struct Tensor {
   // Accumulates a sum of gradients for this tensor if it is a leaf tensor.
   autograd::Node* gradient_accumulator = nullptr;
 
-    Tensor();
-    Tensor(float value);
-    void backward();
-    autograd::Node* get_gradient_edge();
-    TensorSnapshot save();
+  Tensor();
+  Tensor(float value);
+  Tensor(xt::xarray<float> data);
+  
+  void backward();
+  autograd::Node* get_gradient_edge();
+  TensorSnapshot save();
+
+private:
+  template <typename T>
+  static std::vector<size_t> get_shape(std::initializer_list<T> init);
+  
+  template <typename T>
+  static void flatten(std::initializer_list<T> init, std::vector<float>& dest);
 }; // struct Tensor
 
 } // namespace ember
 
-#endif // TENSOR_H
+#endif // EMBER_TENSOR_H

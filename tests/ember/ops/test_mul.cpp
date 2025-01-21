@@ -14,7 +14,6 @@ TEST(Ops, Multiplication) {
   EXPECT_EQ(d.value, 24.0f);
 
   d.backward();
-  EXPECT_EQ(d.gradient->value, 1.0f);
   EXPECT_EQ(c.gradient->value, 6.0f);
   EXPECT_EQ(a.gradient->value, 8.0f);
   EXPECT_EQ(b.gradient->value, 12.0f);

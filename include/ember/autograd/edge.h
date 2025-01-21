@@ -12,7 +12,7 @@ struct Edge {
   Node* fn;
   std::size_t input_nr;
 
-  Edge(std::size_t input_nr, Node* fn): input_nr(input_nr), fn(fn) {}
+  Edge(std::size_t input_nr, Node* fn);
 }; // struct Edge
 
 } // namespace ember::autograd

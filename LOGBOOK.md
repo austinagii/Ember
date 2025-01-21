@@ -1,5 +1,29 @@
 # Project Logbook
 
+## [Template] Month Day, Year
+- **Task**: [Briefly describe the main objective or focus]
+- **Progress**:  
+  - [List the key accomplishments or steps you've taken so far]
+  - [Include any major implementation details or updates]
+- **Notes & Challenges**:  
+  - [Describe any issues, surprises, or technical hurdles]
+  - [Reference any research or documentation that helped]
+- **Next Steps**:  
+  - [Outline what you plan to tackle next]
+
+## January 20 - 21, 2025
+- Task: Implement the ability for `Tensor`'s to store and handle multidimensional array data.
+- **Progress**:  
+  - Added additional field to `Tensor` called `data` which stores multidimensional data as an `xt::xarray<float>`
+  - Added support for element-wise addition of two `Tensor`'s
+  - Added support for gradient calculation for element-wise addition 
+- **Notes & Challenges**:  
+  - Had to spend some time understanding how to calculate partial derivatives for (mathemtatical) tensors 
+  - Gradually upgrading tensors and tensor operations to use multidimensional arrays is temporarily resulting in a messy API and a number of issues 
+- **Next Steps**:  
+  - Update the remaining arithmetic operations to work on multidimensional arrays
+  - Hide the implementation details of the underlying library (xtensor) used to represent mathematical tensors
+
 ## January 11 - 12, 2025
 - **Task**: Compare the current implementation of ember with PyTorch's autograd implementation
 - **Progress**:  
