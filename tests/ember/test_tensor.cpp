@@ -7,7 +7,6 @@ using namespace ember;
 
 TEST(TensorConstructors, DefaultConstructorCreatesEmptyTensor) {
   Tensor t;
-  std::cout << t.data << "\n";
   EXPECT_EQ(t.data.dimension(), 0);
   EXPECT_EQ(t.data.size(), 1);
   EXPECT_TRUE(xt::allclose(t.data, xt::xarray<float>{}));
