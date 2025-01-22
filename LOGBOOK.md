@@ -20,12 +20,10 @@
     ember::Tensor t = {{{1.0f, 2.0f}, {3.0f, 4.0f}},
                        {{5.0f, 6.0f}, {7.0f, 8.0f}}};
     ```
-  - [Include any major implementation details or updates]
 - **Notes & Challenges**:  
-  - [Describe any issues, surprises, or technical hurdles]
-  - [Reference any research or documentation that helped]
+  - Wanted to create a single constructor that allowed for an arbitrary amount of nesting but ended up taking much longer than I would like and was not essential, so scrapped it.
 - **Next Steps**:  
-  - [Outline what you plan to tackle next]
+  - Improve documentation and tidy up code.
 
 ## January 20 - 21, 2025
 - Task: Implement the ability for `Tensor`'s to store and handle multidimensional array data.
