@@ -81,3 +81,15 @@ TEST(TensorMultiplication, MultiplicationByOnePreservesValues) {
     EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{1.0f, 1.0f, 1.0f}));
     EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{1.0f, 2.0f, 3.0f}));
 }
+
+TEST(TensorMultiplication, GradientWithBroadcastAndScalar) {
+    Tensor a = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    Tensor b = {{2.0f, 1.0f}, {0.5f, 2.0f}};
+    
+    auto c = a * b;
+    c.backward();
+
+    // Expected gradients: ∂(a*b)/∂a = b, ∂(a*b)/∂b = a
+    EXPECT_TRUE(xt::allclose(a.gradient->data, b.data, 0.001f));
+    EXPECT_TRUE(xt::allclose(b.gradient->data, a.data, 0.001f));
+}

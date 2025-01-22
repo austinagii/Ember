@@ -76,3 +76,15 @@ TEST(TensorSubtraction, ZeroSubtractionPreservesGradients) {
     EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{-1.0f, -1.0f, -1.0f}));
 }
 
+TEST(TensorSubtraction, GradientWithBroadcastAndScalar) {
+    Tensor matrix = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    Tensor scalar = {2.0f};
+    
+    auto c = matrix - scalar;
+    c.backward();
+
+    // Expected: ∂(m-s)/∂m = 1, ∂(m-s)/∂s = -sum(1)
+    EXPECT_TRUE(xt::allclose(matrix.gradient->data, xt::ones_like(matrix.data), 0.001f));
+    EXPECT_TRUE(xt::allclose(scalar.gradient->data, xt::xarray<float>({-4.0f}), 0.001f));
+}
+

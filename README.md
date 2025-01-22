@@ -3,12 +3,12 @@
 # Ember🔥: A Simplified Autograd Library for Learning Neural Networks
 
 
-Ember is a lightweight C++/Python library designed to help anyone (including me 😅) have a better understanding of the inner workings of neural networks and automatic differentiation. Inspired by [PyTorch](https://github.com/pytorch/pytorch)'s autograd engine with a mix of [micrograd](https://github.com/karpathy/micrograd) and [tinygrad](https://github.com/tinygrad/tinygrad) (I'd encourage you to check out the last two if you haven't already), Ember offers a simplified implementation while maintaining a familiar interface, making it a useful as a stepping stone to transitioning to PyTorch’s full capabilities.
+Ember is a lightweight C++/Python library designed to help anyone (including me 😅) have a better understanding of the inner workings of neural networks and automatic differentiation. Inspired by [PyTorch](https://github.com/pytorch/pytorch)'s autograd engine with a mix of [micrograd](https://github.com/karpathy/micrograd) and [tinygrad](https://github.com/tinygrad/tinygrad) (I'd encourage you to check out the last two if you haven't already), Ember offers a simplified implementation while maintaining a familiar interface, making it a useful as a stepping stone to transitioning to PyTorch's full capabilities.
 
 
 ## Why Ember?
 
-Understanding the internals of a neural network’s training process can be pretty challenging, especially when diving right in with a production-grade framework like PyTorch, with all it's necessary optimizations. If you're like me, you like to peek under the hood to get a good idea of how things work but wished you could just see the implementation of the core concepts without getting lost in the details. 
+Understanding the internals of a neural network's training process can be pretty challenging, especially when diving right in with a production-grade framework like PyTorch, with all it's necessary optimizations. If you're like me, you like to peek under the hood to get a good idea of how things work but wished you could just see the implementation of the core concepts without getting lost in the details. 
 </br></br>
 Ember aims to accomplish this by providing a clear, concise and documentation first approach to implementating key concepts like computational graphs and reverse-mode automatic differentiation, while keeping mostly the same interface as PyTorch.
 
@@ -18,7 +18,7 @@ With Ember, you can:
  - Deepen your understanding of gradients, backpropagation, and loss functions.
  - Seamlessly transition to PyTorch with a similar interface and workflow.
 
-If you're a curious person and want to understand the “magic” behind machine learning, Ember is designed to make that easy. 
+If you're a curious person and want to understand the "magic" behind machine learning, Ember is designed to make that easy. 
 
 
 ## Getting Started
@@ -52,25 +52,32 @@ If you're a curious person and want to understand the “magic” behind machine
 
 ```cpp
 #include <ember/tensor.h>
+#include <iostream>
 
 int main() {
-    // Create tensors
-    Tensor a(3.0f);
-    Tensor b(2.0f);
-    Tensor c(4.0f);
+    // Create tensors of different dimensions
+    Tensor a = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    Tensor b = {{2.0f, 1.0f}, {0.5f, 2.0f}};
+    Tensor scalar = {3.0f};  // Will be broadcast when needed
 
-    // Perform operations
-    auto d = (a * b + c) / (a - b);
-    // d = (3 * 2 + 4) / (3 - 2) = 10 / 1 = 10
-    std::cout << "Result: " << d.value << std::endl;
+    // Perform element-wise operations with broadcasting
+    auto c = (a * b) + scalar;  // Multiply matrices then add scalar to each element
+    auto d = c / Tensor({2.0f});  // Divide entire matrix by 2
 
-    // Backpropagate to compute gradients
-    d.backward();
-    
-    // Access gradients
-    std::cout << "Gradient of a: " << a.gradient->value << std::endl;
-    std::cout << "Gradient of b: " << b.gradient->value << std::endl;
-    std::cout << "Gradient of c: " << c.gradient->value << std::endl;
+    // Create a more complex computation graph
+    auto e = (d * a - b) / (c + scalar);
+
+    std::cout << "Result matrix:" << std::endl;
+    std::cout << e.data << std::endl;
+
+    // Compute gradients through backpropagation
+    e.backward();
+
+    // Access gradients for each input tensor
+    std::cout << "\nGradients:" << std::endl;
+    std::cout << "∂e/∂a = " << a.gradient->data << std::endl;
+    std::cout << "∂e/∂b = " << b.gradient->data << std::endl;
+    std::cout << "∂e/∂scalar = " << scalar.gradient->data << std::endl;
 
     return 0;
 }
@@ -78,15 +85,23 @@ int main() {
 
 Output:
 ```
-Result: 10
-Gradient of a: -8
-Gradient of b: 12
-Gradient of c: 1
+Result matrix:
+{{ 0.0625, 0.5000 },
+ { 0.8333, 1.4290 }}
+
+Gradients:
+∂e/∂a = 
+{{ 0.3125, 0.3125 },
+ { 0.3000, 0.3929 }}
+∂e/∂b = 
+{{ -0.1250, -0.1250 },
+ { -0.1333, -0.0714 }}
+∂e/∂scalar = -0.2857
 ```
 
-## What’s Next for Ember?
+## What's Next for Ember?
 
-We’re just getting started! Here’s a sneak peek at what’s on the roadmap for Ember:
+We're just getting started! Here's a sneak peek at what's on the roadmap for Ember:
 
 ### 🚀 Upcoming Features
 
@@ -108,7 +123,7 @@ Deep dives into the theory behind autograd, tutorials for building neural networ
 
 #### Python API
 
-An optional Python wrapper for those who prefer Python’s flexibility while maintaining Ember’s core functionality.
+An optional Python wrapper for those who prefer Python's flexibility while maintaining Ember's core functionality.
 
 
 ## 🌟 Join the Journey

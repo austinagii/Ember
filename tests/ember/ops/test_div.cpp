@@ -89,4 +89,20 @@ TEST(TensorDivision, DivisionByZeroThrows) {
     Tensor a = {1.0f};
     Tensor b = {0.0f};
     EXPECT_THROW(a / b, std::runtime_error);
+}
+
+TEST(TensorDivision, GradientWithBroadcastAndScalar) {
+    Tensor a = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+    Tensor scalar = {2.0f};
+    
+    auto c = a / scalar;
+    c.backward();
+
+    // Expected: ∂(a/s)/∂a = 1/s
+    xt::xarray<float> expected_grad_a = xt::ones_like(a.data) / scalar.data;
+    EXPECT_TRUE(xt::allclose(a.gradient->data, expected_grad_a, 0.001f));
+
+    // Expected: ∂(a/s)/∂s = -a/s²
+    xt::xarray<float> expected_grad_scalar = {-xt::sum(a.data / (scalar.data * scalar.data))()};
+    EXPECT_TRUE(xt::allclose(scalar.gradient->data, expected_grad_scalar, 0.001f));
 } 

@@ -45,10 +45,14 @@ set(EMBER_TESTS
   tests/ember/ops/test_add.cpp
   tests/ember/ops/test_mul.cpp
   tests/ember/ops/test_div.cpp
+  tests/ember/test_readme.cpp
 )
 
 # Test executable
-add_executable(ember_test ${EMBER_TESTS} ${EMBER_SOURCES})
+add_executable(ember_test 
+    ${EMBER_TESTS} 
+    ${EMBER_SOURCES}
+)
 target_include_directories(ember_test PRIVATE include)
 target_link_libraries(ember_test PRIVATE 
     gtest_main 
