@@ -11,6 +11,22 @@
 - **Next Steps**:  
   - [Outline what you plan to tackle next]
 
+## January 22, 2025
+- **Task**: Update arithmetic operations to all operate on multidimensional arrays
+- **Progress**:  
+  - Added support for element-wise subtraction, multiplication and division of two `Tensor`'s
+  - Added intializer list constructors to allow the construction of up to 3d tensors to improve usability
+    ```c++
+    ember::Tensor t = {{{1.0f, 2.0f}, {3.0f, 4.0f}},
+                       {{5.0f, 6.0f}, {7.0f, 8.0f}}};
+    ```
+  - [Include any major implementation details or updates]
+- **Notes & Challenges**:  
+  - [Describe any issues, surprises, or technical hurdles]
+  - [Reference any research or documentation that helped]
+- **Next Steps**:  
+  - [Outline what you plan to tackle next]
+
 ## January 20 - 21, 2025
 - Task: Implement the ability for `Tensor`'s to store and handle multidimensional array data.
 - **Progress**:  
