@@ -9,8 +9,8 @@
 using namespace ember;
 
 TEST(TensorMultiplication, ScalarTensorsCanBeMultiplied) {
-  Tensor a = xt::xarray<float>({3.0f});
-  Tensor b = xt::xarray<float>({2.0f});
+  Tensor a = {3.0f};
+  Tensor b = {2.0f};
   Tensor c = a * b;
 
   auto product = c.data;
@@ -19,13 +19,13 @@ TEST(TensorMultiplication, ScalarTensorsCanBeMultiplied) {
 
   c.backward();
 
-  EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{2.0f}));  // grad_a = b
-  EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{3.0f}));  // grad_b = a
+  EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{2.0f}));
+  EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{3.0f}));
 }
 
 TEST(TensorMultiplication, MultidimensionalTensorsCanBeMultiplied) {
-  Tensor a = xt::xarray<float>({{1.0f, 2.0f}, {3.0f, 4.0f}});
-  Tensor b = xt::xarray<float>({{2.0f, 3.0f}, {4.0f, 5.0f}});
+  Tensor a = {{1.0f, 2.0f}, {3.0f, 4.0f}};
+  Tensor b = {{2.0f, 3.0f}, {4.0f, 5.0f}};
   Tensor c = a * b;
 
   xt::xarray<float> product = c.data;
@@ -35,17 +35,17 @@ TEST(TensorMultiplication, MultidimensionalTensorsCanBeMultiplied) {
 
   c.backward();
 
-  EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{{2.0f, 3.0f}, {4.0f, 5.0f}}));  // grad_a = b
-  EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{{1.0f, 2.0f}, {3.0f, 4.0f}}));  // grad_b = a
+  EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{{2.0f, 3.0f}, {4.0f, 5.0f}}));
+  EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{{1.0f, 2.0f}, {3.0f, 4.0f}}));
 }
 
 TEST(TensorMultiplication, AnonymousIntermediateTensorsCanBeMultiplied) {
-  Tensor a = xt::xarray<float>({{2.0f, 3.0f}, {4.0f, 5.0f}});
-  Tensor b = xt::xarray<float>({{3.0f, 4.0f}, {5.0f, 6.0f}});
+  Tensor a = {{2.0f, 3.0f}, {4.0f, 5.0f}};
+  Tensor b = {{3.0f, 4.0f}, {5.0f, 6.0f}};
   Tensor c = a * b;
   
-  Tensor d = (c * Tensor(xt::xarray<float>({{2.0f, 2.0f}, {2.0f, 2.0f}}))) * 
-             (c * Tensor(xt::xarray<float>({{3.0f, 3.0f}, {3.0f, 3.0f}})));
+  Tensor d = (c * Tensor({{2.0f, 2.0f}, {2.0f, 2.0f}})) * 
+             (c * Tensor({{3.0f, 3.0f}, {3.0f, 3.0f}}));
   
   xt::xarray<float> expected = {{216.0f, 864.0f}, {2400.0f, 5400.0f}};
   EXPECT_TRUE(xt::allclose(d.data, expected));
@@ -59,25 +59,25 @@ TEST(TensorMultiplication, AnonymousIntermediateTensorsCanBeMultiplied) {
 }
 
 TEST(TensorMultiplication, BroadcastingWorks) {
-    Tensor a = xt::xarray<float>({1.0f, 2.0f, 3.0f});
-    Tensor b = xt::xarray<float>({2.0f});  // Scalar to be broadcast
+    Tensor a = {1.0f, 2.0f, 3.0f};
+    Tensor b = {2.0f};  // Scalar to be broadcast
     Tensor c = a * b;
 
     EXPECT_TRUE(xt::allclose(c.data, xt::xarray<float>{2.0f, 4.0f, 6.0f}));
 
     c.backward();
-    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{2.0f, 2.0f, 2.0f}));  // grad_a = b
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{6.0f}));  // grad_b = sum(a)
+    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{2.0f, 2.0f, 2.0f}));
+    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{6.0f}));
 }
 
 TEST(TensorMultiplication, MultiplicationByOnePreservesValues) {
-    Tensor a = xt::xarray<float>({1.0f, 2.0f, 3.0f});
-    Tensor b = xt::xarray<float>({1.0f, 1.0f, 1.0f});
+    Tensor a = {1.0f, 2.0f, 3.0f};
+    Tensor b = {1.0f, 1.0f, 1.0f};
     Tensor c = a * b;
 
     EXPECT_TRUE(xt::allclose(c.data, xt::xarray<float>{1.0f, 2.0f, 3.0f}));
 
     c.backward();
-    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{1.0f, 1.0f, 1.0f}));  // grad_a = b = 1
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{1.0f, 2.0f, 3.0f}));  // grad_b = a
+    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{1.0f, 1.0f, 1.0f}));
+    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{1.0f, 2.0f, 3.0f}));
 }

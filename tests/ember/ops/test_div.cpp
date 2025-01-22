@@ -8,8 +8,8 @@
 using namespace ember;
 
 TEST(TensorDivision, ScalarTensorsCanBeDivided) {
-    Tensor a = xt::xarray<float>({24.0f});
-    Tensor b = xt::xarray<float>({6.0f});
+    Tensor a = {24.0f};
+    Tensor b = {6.0f};
     Tensor c = a / b;
 
     auto quotient = c.data;
@@ -24,8 +24,8 @@ TEST(TensorDivision, ScalarTensorsCanBeDivided) {
 }
 
 TEST(TensorDivision, MultidimensionalTensorsCanBeDivided) {
-    Tensor a = xt::xarray<float>({{12.0f, 9.0f}, {6.0f, 3.0f}});
-    Tensor b = xt::xarray<float>({{3.0f, 3.0f}, {2.0f, 1.0f}});
+    Tensor a = {{12.0f, 9.0f}, {6.0f, 3.0f}};
+    Tensor b = {{3.0f, 3.0f}, {2.0f, 1.0f}};
     Tensor c = a / b;
 
     xt::xarray<float> quotient = c.data;
@@ -45,12 +45,12 @@ TEST(TensorDivision, MultidimensionalTensorsCanBeDivided) {
 }
 
 TEST(TensorDivision, AnonymousIntermediateTensorsCanBeDivided) {
-    Tensor a = xt::xarray<float>({{8.0f, 6.0f}, {4.0f, 2.0f}});
-    Tensor b = xt::xarray<float>({{2.0f, 2.0f}, {2.0f, 2.0f}});
+    Tensor a = {{8.0f, 6.0f}, {4.0f, 2.0f}};
+    Tensor b = {{2.0f, 2.0f}, {2.0f, 2.0f}};
     Tensor c = a / b;
     
-    Tensor d = (c / Tensor(xt::xarray<float>({{2.0f, 2.0f}, {2.0f, 2.0f}}))) / 
-               (c / Tensor(xt::xarray<float>({{4.0f, 4.0f}, {4.0f, 4.0f}})));
+    Tensor d = (c / Tensor({{2.0f, 2.0f}, {2.0f, 2.0f}})) / 
+               (c / Tensor({{4.0f, 4.0f}, {4.0f, 4.0f}}));
     EXPECT_TRUE(xt::allclose(d.data, xt::xarray<float>({{2.0f, 2.0f}, {2.0f, 2.0f}})));
 
     d.backward();
@@ -60,8 +60,8 @@ TEST(TensorDivision, AnonymousIntermediateTensorsCanBeDivided) {
 }
 
 TEST(TensorDivision, BroadcastingWorks) {
-    Tensor a = xt::xarray<float>({6.0f, 9.0f, 12.0f});
-    Tensor b = xt::xarray<float>({3.0f});  // Scalar to be broadcast
+    Tensor a = {6.0f, 9.0f, 12.0f};
+    Tensor b = {3.0f};  // Scalar to be broadcast
     Tensor c = a / b;
 
     EXPECT_TRUE(xt::allclose(c.data, xt::xarray<float>{2.0f, 3.0f, 4.0f}));
@@ -74,8 +74,8 @@ TEST(TensorDivision, BroadcastingWorks) {
 }
 
 TEST(TensorDivision, DivisionByOne) {
-    Tensor a = xt::xarray<float>({1.0f, 2.0f, 3.0f});
-    Tensor b = xt::xarray<float>({1.0f, 1.0f, 1.0f});
+    Tensor a = {1.0f, 2.0f, 3.0f};
+    Tensor b = {1.0f, 1.0f, 1.0f};
     Tensor c = a / b;
 
     EXPECT_TRUE(xt::allclose(c.data, xt::xarray<float>{1.0f, 2.0f, 3.0f}));
@@ -86,7 +86,7 @@ TEST(TensorDivision, DivisionByOne) {
 }
 
 TEST(TensorDivision, DivisionByZeroThrows) {
-    Tensor a = xt::xarray<float>({1.0f});
-    Tensor b = xt::xarray<float>({0.0f});
+    Tensor a = {1.0f};
+    Tensor b = {0.0f};
     EXPECT_THROW(a / b, std::runtime_error);
 } 

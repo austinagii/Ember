@@ -10,7 +10,7 @@ static Tensor divide_tensors(Tensor& dividend, Tensor& divisor) {
         throw std::runtime_error("Division by zero encountered");
     }
 
-    Tensor quotient = xt::eval(dividend.data / divisor.data);  // xtensor handles broadcasting
+    Tensor quotient = Tensor::from_xarray(xt::eval(dividend.data / divisor.data));  // xtensor handles broadcasting
     auto gradient_fn = new DivBackward(dividend, divisor);
     gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
                                     {dividend.save(), divisor.save()});

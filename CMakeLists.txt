@@ -40,6 +40,7 @@ set(EMBER_SOURCES
 
 # Test files
 set(EMBER_TESTS
+  tests/ember/test_tensor.cpp
   tests/ember/ops/test_sub.cpp
   tests/ember/ops/test_add.cpp
   tests/ember/ops/test_mul.cpp

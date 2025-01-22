@@ -8,8 +8,8 @@
 using namespace ember;
 
 TEST(TensorSubtraction, ScalarTensorsCanBeSubtracted) {
-  Tensor a = xt::xarray<float>({1.0f});
-  Tensor b = xt::xarray<float>({5.0f});
+  Tensor a = {1.0f};
+  Tensor b = {5.0f};
   Tensor c = a - b;
 
   auto difference = c.data;
@@ -23,8 +23,8 @@ TEST(TensorSubtraction, ScalarTensorsCanBeSubtracted) {
 }
 
 TEST(TensorSubtraction, MultidimensionalTensorsCanBeSubtracted) {
-  Tensor a = xt::xarray<float>({{1.0f, 9.0f}, {3.0f, 2.2f}});
-  Tensor b = xt::xarray<float>({{5.0f, 3.0f}, {2.0f, 1.3f}});
+  Tensor a = {{1.0f, 9.0f}, {3.0f, 2.2f}};
+  Tensor b = {{5.0f, 3.0f}, {2.0f, 1.3f}};
   Tensor c = a - b;
 
   xt::xarray<float> difference = c.data;
@@ -39,12 +39,12 @@ TEST(TensorSubtraction, MultidimensionalTensorsCanBeSubtracted) {
 }
 
 TEST(TensorSubtraction, AnonymousIntermediateTensorsCanBeSubtracted) {
-  Tensor a = xt::xarray<float>({{7.0f, 3.0f}, {4.0f, 1.0f}});
-  Tensor b = xt::xarray<float>({{8.0f, 2.0f}, {5.0f, 0.0f}});
+  Tensor a = {{7.0f, 3.0f}, {4.0f, 1.0f}};
+  Tensor b = {{8.0f, 2.0f}, {5.0f, 0.0f}};
   Tensor c = a - b;
   
-  Tensor d = (c - Tensor(xt::xarray<float>({{3.0f, 3.0f}, {3.0f, 3.0f}}))) - 
-             (c - Tensor(xt::xarray<float>({{5.0f, 5.0f}, {5.0f, 5.0f}})));
+  Tensor d = (c - Tensor({{3.0f, 3.0f}, {3.0f, 3.0f}})) - 
+             (c - Tensor({{5.0f, 5.0f}, {5.0f, 5.0f}}));
   EXPECT_TRUE(xt::allclose(d.data, xt::xarray<float>({{2.0f, 2.0f}, {2.0f, 2.0f}})));
 
   d.backward();
@@ -53,21 +53,21 @@ TEST(TensorSubtraction, AnonymousIntermediateTensorsCanBeSubtracted) {
 }
 
 TEST(TensorSubtraction, BroadcastingWorks) {
-    Tensor a = xt::xarray<float>({1.0f, 2.0f, 3.0f});
-    Tensor b = xt::xarray<float>({5.0f});  // Scalar to be broadcast
+    Tensor a = {1.0f, 2.0f, 3.0f};
+    Tensor b = {5.0f};  // Scalar to be broadcast
     Tensor c = a - b;
 
     EXPECT_TRUE(xt::allclose(c.data, xt::xarray<float>{-4.0f, -3.0f, -2.0f}));
 
     c.backward();
     EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{1.0f, 1.0f, 1.0f}));
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{-3.0f}));  // Sum of gradients
+    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{-3.0f}));
 }
 
 TEST(TensorSubtraction, ZeroSubtractionPreservesGradients) {
-    Tensor a = xt::xarray<float>({1.0f, 2.0f, 3.0f});
-    Tensor b = xt::xarray<float>({1.0f, 2.0f, 3.0f});
-    Tensor c = a - b;  // Should be all zeros
+    Tensor a = {1.0f, 2.0f, 3.0f};
+    Tensor b = {1.0f, 2.0f, 3.0f};
+    Tensor c = a - b;
 
     EXPECT_TRUE(xt::allclose(c.data, xt::xarray<float>{0.0f, 0.0f, 0.0f}));
 

@@ -6,7 +6,7 @@ std::size_t MULTIPLICAND_INDEX = 0;
 std::size_t MULTIPLIER_INDEX = 1;
 
 static Tensor multiply_tensors(Tensor& multiplicand, Tensor& multiplier) {
-    Tensor product = xt::eval(multiplicand.data * multiplier.data);  // xtensor handles broadcasting
+    Tensor product = Tensor::from_xarray(xt::eval(multiplicand.data * multiplier.data));  // xtensor handles broadcasting
     auto gradient_fn = new MulBackward(multiplicand, multiplier);
     gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
                                     {multiplicand.save(), multiplier.save()});

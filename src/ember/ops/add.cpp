@@ -12,7 +12,7 @@ std::size_t AUGEND_INDEX = 0;
 std::size_t ADDEND_INDEX = 1;
 
 static Tensor add_tensors(Tensor& augend, Tensor& addend) {
-  Tensor sum = xt::eval(augend.data + addend.data);
+  Tensor sum = Tensor::from_xarray(xt::eval(augend.data + addend.data));
   auto gradient_fn = new AddBackward(augend, addend);
   gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
                                     {augend.save(), addend.save()});

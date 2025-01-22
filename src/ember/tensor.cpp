@@ -20,6 +20,18 @@ Tensor::Tensor(xt::xarray<float> data):
   gradient_fn(nullptr), 
   gradient_accumulator(nullptr) {}
 
+Tensor::Tensor(std::initializer_list<float> values) {
+  data = xt::xarray<float>(values);
+}
+
+Tensor::Tensor(std::initializer_list<std::initializer_list<float>> values) {
+  data = xt::xarray<float>(values);
+}
+
+Tensor::Tensor(std::initializer_list<std::initializer_list<std::initializer_list<float>>> values) {
+  data = xt::xarray<float>(values);
+}
+
 void Tensor::backward() {
   // Create engine instance for this backward pass
   autograd::Engine engine;
