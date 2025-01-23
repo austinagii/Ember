@@ -39,18 +39,18 @@ struct Tensor {
   autograd::Node* gradient_accumulator = nullptr;
 
   Tensor();
-  explicit Tensor(xt::xarray<float> data);
+  explicit Tensor(xt::xarray<double> data);
   
   // 1D tensor constructor
-  Tensor(std::initializer_list<float> values);
+  Tensor(std::initializer_list<double> values);
 
   // 2D tensor constructor
-  Tensor(std::initializer_list<std::initializer_list<float>> values);
+  Tensor(std::initializer_list<std::initializer_list<double>> values);
 
   // 3D tensor constructor
-  Tensor(std::initializer_list<std::initializer_list<std::initializer_list<float>>> values);
+  Tensor(std::initializer_list<std::initializer_list<std::initializer_list<double>>> values);
   
-  static Tensor from_xarray(xt::xarray<float> data) {
+  static Tensor from_xarray(xt::xarray<double> data) {
     auto t = Tensor();
     t.data = data;
     return t;

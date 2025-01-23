@@ -6,7 +6,7 @@ std::size_t DIVIDEND_INDEX = 0;
 std::size_t DIVISOR_INDEX = 1;
 
 static Tensor divide_tensors(Tensor& dividend, Tensor& divisor) {
-    if (xt::any(xt::equal(divisor.data, 0.0f))) {
+    if (xt::any(xt::equal(divisor.data, 0.0))) {
         throw std::runtime_error("Division by zero encountered");
     }
 

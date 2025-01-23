@@ -14,22 +14,22 @@ Tensor::Tensor():
   gradient_fn(nullptr), 
   gradient_accumulator(nullptr) {}
 
-Tensor::Tensor(xt::xarray<float> data): 
+Tensor::Tensor(xt::xarray<double> data): 
   data(data), 
   gradient(nullptr), 
   gradient_fn(nullptr), 
   gradient_accumulator(nullptr) {}
 
-Tensor::Tensor(std::initializer_list<float> values) {
-  data = xt::xarray<float>(values);
+Tensor::Tensor(std::initializer_list<double> values) {
+  data = xt::xarray<double>(values);
 }
 
-Tensor::Tensor(std::initializer_list<std::initializer_list<float>> values) {
-  data = xt::xarray<float>(values);
+Tensor::Tensor(std::initializer_list<std::initializer_list<double>> values) {
+  data = xt::xarray<double>(values);
 }
 
-Tensor::Tensor(std::initializer_list<std::initializer_list<std::initializer_list<float>>> values) {
-  data = xt::xarray<float>(values);
+Tensor::Tensor(std::initializer_list<std::initializer_list<std::initializer_list<double>>> values) {
+  data = xt::xarray<double>(values);
 }
 
 void Tensor::backward() {
