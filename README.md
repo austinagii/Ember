@@ -56,24 +56,23 @@ If you're a curious person and want to understand the "magic" behind machine lea
 
 int main() {
     // Create tensors of different dimensions
-    Tensor a = {{1.0f, 2.0f}, {3.0f, 4.0f}};
-    Tensor b = {{2.0f, 1.0f}, {0.5f, 2.0f}};
-    Tensor scalar = {3.0f};  // Will be broadcast when needed
+    ember::Tensor a = {{1.0, 2.0}, {3.0, 4.0}};
+    ember::Tensor b = {{2.0, 1.0}, {0.5, 2.0}};
+    ember::Tensor scalar = ember::Tensor(3.0);
 
     // Perform element-wise operations with broadcasting
-    auto c = (a * b) + scalar;  // Multiply matrices then add scalar to each element
-    auto d = c / Tensor({2.0f});  // Divide entire matrix by 2
+    auto c = (a * b) + scalar;  
+    auto d = c / 2; 
 
     // Create a more complex computation graph
     auto e = (d * a - b) / (c + scalar);
 
-    std::cout << "Result matrix:" << std::endl;
+    std::cout << "Output tensor:" << std::endl;
     std::cout << e.data << std::endl;
 
     // Compute gradients through backpropagation
     e.backward();
 
-    // Access gradients for each input tensor
     std::cout << "\nGradients:" << std::endl;
     std::cout << "∂e/∂a = " << a.gradient->data << std::endl;
     std::cout << "∂e/∂b = " << b.gradient->data << std::endl;
@@ -85,18 +84,18 @@ int main() {
 
 Output:
 ```
-Result matrix:
+Output tensor:
 {{ 0.0625, 0.5000 },
- { 0.8333, 1.4290 }}
+ { 0.8333, 1.4286 }}
 
 Gradients:
 ∂e/∂a = 
-{{ 0.3125, 0.3125 },
- { 0.3000, 0.3929 }}
+{{ 0.4219, 0.3750 },
+ { 0.3444, 0.4745 }}
 ∂e/∂b = 
-{{ -0.1250, -0.1250 },
- { -0.1333, -0.0714 }}
-∂e/∂scalar = -0.2857
+{{ -0.0703, 0.0000 },
+ { 0.1333, 0.0918 }}
+∂e/∂scalar = -0.0366
 ```
 
 ## What's Next for Ember?

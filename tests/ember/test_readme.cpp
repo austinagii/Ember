@@ -9,11 +9,11 @@ TEST(ReadmeExample, ComputationAndGradientsAreCorrect) {
     // Create tensors
     Tensor a = {{1.0f, 2.0f}, {3.0f, 4.0f}};
     Tensor b = {{2.0f, 1.0f}, {0.5f, 2.0f}};
-    Tensor scalar = {3.0f};
+    Tensor scalar = 3.0f;
 
     // Perform element-wise operations with broadcasting
     auto c = (a * b) + scalar;
-    auto d = c / Tensor({2.0f});
+    auto d = c / 2;
     auto e = (d * a - b) / (c + scalar); // Uncommented calculation for e
 
     // Expected results for d and e
