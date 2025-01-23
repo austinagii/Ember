@@ -76,7 +76,7 @@ std::vector<Tensor> MulBackward::operator()(Tensor output_grad) {
                                                       multiplicand.data, 
                                                       output_grad.data);
     
-    return {Tensor(multiplicand_grad), Tensor(multiplier_grad)};
+    return {Tensor::from_xarray(multiplicand_grad), Tensor::from_xarray(multiplier_grad)};
 }
 
 } // namespace ember

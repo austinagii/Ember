@@ -14,11 +14,9 @@ Tensor::Tensor():
   gradient_fn(nullptr), 
   gradient_accumulator(nullptr) {}
 
-Tensor::Tensor(xt::xarray<double> data): 
-  data(data), 
-  gradient(nullptr), 
-  gradient_fn(nullptr), 
-  gradient_accumulator(nullptr) {}
+Tensor::Tensor(double value) {
+  data = xt::xarray<double>({value});
+}
 
 Tensor::Tensor(std::initializer_list<double> values) {
   data = xt::xarray<double>(values);

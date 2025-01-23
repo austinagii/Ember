@@ -15,15 +15,6 @@ TEST(TensorConstructors, DefaultConstructorCreatesEmptyTensor) {
   EXPECT_EQ(t.gradient_accumulator, nullptr);
 }
 
-TEST(TensorConstructors, XArrayConstructorPreservesShape) {
-  xt::xarray<float> data = xt::xarray<float>::from_shape({2, 3});
-  Tensor t(data);
-  EXPECT_EQ(t.data.shape(), data.shape());
-  EXPECT_EQ(t.gradient, nullptr);
-  EXPECT_EQ(t.gradient_fn, nullptr);
-  EXPECT_EQ(t.gradient_accumulator, nullptr);
-}
-
 TEST(TensorConstructors, OneDimensionalInitializerList) {
   Tensor t = {1.0f, 2.0f, 3.0f};
   EXPECT_EQ(t.data.dimension(), 1);

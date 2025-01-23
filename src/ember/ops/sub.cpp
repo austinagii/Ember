@@ -61,8 +61,8 @@ std::vector<Tensor> SubBackward::operator()(Tensor output_grad) {
   auto minuend = saved_tensors[MINUEND_INDEX];
   auto subtrahend = saved_tensors[SUBTRAHEND_INDEX];
 
-  auto minuend_grad = Tensor(calculate_local_sub_gradient(minuend.data, output_grad.data));
-  auto subtrahend_grad = Tensor(-1 * calculate_local_sub_gradient(subtrahend.data, output_grad.data));
+  auto minuend_grad = Tensor::from_xarray(calculate_local_sub_gradient(minuend.data, output_grad.data));
+  auto subtrahend_grad = Tensor::from_xarray(-1 * calculate_local_sub_gradient(subtrahend.data, output_grad.data));
   return {minuend_grad, subtrahend_grad};
 }
 

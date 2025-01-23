@@ -39,7 +39,7 @@ struct Tensor {
   autograd::Node* gradient_accumulator = nullptr;
 
   Tensor();
-  explicit Tensor(xt::xarray<double> data);
+  Tensor(double value);
   
   // 1D tensor constructor
   Tensor(std::initializer_list<double> values);

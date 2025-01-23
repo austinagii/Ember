@@ -78,7 +78,7 @@ std::vector<Tensor> DivBackward::operator()(Tensor output_grad) {
     auto dividend_grad = reduce_broadcast(dividend_grad_raw, dividend.data);
     auto divisor_grad = reduce_broadcast(divisor_grad_raw, divisor.data);
 
-    return {Tensor(dividend_grad), Tensor(divisor_grad)};
+    return {Tensor::from_xarray(dividend_grad), Tensor::from_xarray(divisor_grad)};
 }
 
 } // namespace ember

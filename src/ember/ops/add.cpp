@@ -78,7 +78,7 @@ std::vector<Tensor> AddBackward::operator()(Tensor output_grad) {
 
   auto augend_gradient = calculate_local_add_gradient(augend.data, output_grad.data);
   auto addend_gradient = calculate_local_add_gradient(addend.data, output_grad.data);
-  return {Tensor(augend_gradient), Tensor(addend_gradient)};
+  return {Tensor::from_xarray(augend_gradient), Tensor::from_xarray(addend_gradient)};
 }
 
 }
