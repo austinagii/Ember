@@ -40,7 +40,7 @@ DivBackward::DivBackward(Tensor& dividend, Tensor& divisor) {
 }
 
 xt::xarray<float> reduce_broadcast(const xt::xarray<float>& grad, 
-                                 const xt::xarray<float>& original) {
+                                   const xt::xarray<float>& original) {
     auto input_shape = original.shape();
     auto input_rank = input_shape.size();
     auto output_shape = grad.shape();
@@ -53,9 +53,10 @@ xt::xarray<float> reduce_broadcast(const xt::xarray<float>& grad,
     }
 
     auto result = grad;
-    for (auto i = 0; i < output_rank; i++) {
-        if (padded_input_shape[i] != output_shape[i]) {
-            result = xt::sum(result, i);
+    // Summation from the highest dimension down to 0
+    for (int dim = output_rank - 1; dim >= 0; dim--) {
+        if (padded_input_shape[dim] != result.shape()[dim]) {
+            result = xt::sum(result, dim);
         }
     }
     return result;

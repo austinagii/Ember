@@ -54,7 +54,7 @@ xt::xarray<float> calculate_local_mul_gradient(xt::xarray<float> input,
     auto input_grad = xt::eval(output_grad * other);  // xtensor handles broadcasting
     
     // Reduce along broadcast dimensions
-    for (auto i = 0; i < output_rank; i++) {
+    for (int i = output_rank - 1; i >= 0; i--) {
         if (padded_input_shape[i] != output_shape[i]) {
             input_grad = xt::sum(input_grad, i);
         }

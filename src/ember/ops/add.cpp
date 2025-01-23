@@ -4,7 +4,7 @@
 
 #include <xtensor/xbroadcast.hpp>
 #include <xtensor/xbuilder.hpp>
-
+#include <xtensor/xio.hpp>
 
 namespace ember {
 
@@ -63,7 +63,7 @@ xt::xarray<float> calculate_local_add_gradient(xt::xarray<float> input, xt::xarr
   }
 
   auto input_grad = output_grad;  // This needs to be a copy.
-  for (auto i = 0; i < output_rank; i++) {
+  for (int i = output_rank - 1; i >= 0; i--) {
     if (padded_input_shape[i] != output_shape[i]) {
       // we must collapse along this dimension.
       input_grad = xt::sum(input_grad, i);
