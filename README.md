@@ -58,14 +58,14 @@ int main() {
     // Create tensors of different dimensions
     ember::Tensor a = {{1.0, 2.0}, {3.0, 4.0}};
     ember::Tensor b = {{2.0, 1.0}, {0.5, 2.0}};
-    ember::Tensor scalar = ember::Tensor(3.0);
+    ember::Tensor c = {3.0};
 
     // Perform element-wise operations with broadcasting
-    auto c = (a * b) + scalar;  
-    auto d = c / 2; 
+    auto d = (a * b) + c;  
+    auto e = d / 2; 
 
     // Create a more complex computation graph
-    auto e = (d * a - b) / (c + scalar);
+    auto f = (d * a - b) / (c + 2);
 
     std::cout << "Output tensor:" << std::endl;
     std::cout << e.data << std::endl;
@@ -76,7 +76,7 @@ int main() {
     std::cout << "\nGradients:" << std::endl;
     std::cout << "∂e/∂a = " << a.gradient->data << std::endl;
     std::cout << "∂e/∂b = " << b.gradient->data << std::endl;
-    std::cout << "∂e/∂scalar = " << scalar.gradient->data << std::endl;
+    std::cout << "∂e/∂c = " << c.gradient->data << std::endl;
 
     return 0;
 }
@@ -95,7 +95,7 @@ Gradients:
 ∂e/∂b = 
 {{ -0.0703, 0.0000 },
  { 0.1333, 0.0918 }}
-∂e/∂scalar = -0.0366
+∂e/∂c = -0.0366
 ```
 
 ## What's Next for Ember?
