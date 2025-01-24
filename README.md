@@ -136,20 +136,20 @@ int main() {
 In this example, we've created a function `f` that takes a `Tensor` and performs a series of operations on it. Specifically, multiplications and additions. When you think of a computational graph for this function, you may think of it like this:
 
 ```
-                  ┌──────────────────────────┐
-                  │  output = x * x + 2 * x + 1
-                  └─────────┬────────────────┘
-                           │
-                        ( + )  ← final addition (+)
-                        /     \
+               ┌────────────────────────────┐
+               │ output = x * x + 2 * x + 1 │ 
+               └────────────┬───────────────┘
+                            │
+                          ( + )  ← final addition (+)
+                         /     \
                         /       1
-                     /
+                       /
                      ( + )      ← addition of x² and 2x
-                  /     \
-                  /       \
-               ( * )      ( * )  ← multiplication nodes
-               /   \      /   \
-               x     x    2     x
+                    /     \
+                   /       \
+                ( * )     ( * )  ← multiplication nodes
+                /   \     /   \
+               x     x   2     x
 ```
 
 This computational graph though, represents the computation of the output, which is not actually what we really need the computation graph for. What we actually want is a graph that looks like this:
