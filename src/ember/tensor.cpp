@@ -30,6 +30,7 @@ Tensor::Tensor(std::initializer_list<std::initializer_list<std::initializer_list
   data = xt::xarray<double>(values);
 }
 
+// TODO: Refactor this code so that performing a top sort of the graph happens within the engine.
 void Tensor::backward() {
   // Create engine instance for this backward pass
   autograd::Engine engine;

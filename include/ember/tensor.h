@@ -21,14 +21,21 @@
 
 namespace ember {
 
-// Forward declare TensorSnapshot
 struct TensorSnapshot;
 
 /**
-* This class corresponds to the `Variable` class in PyTorch's autograd, the
-* difference in naming here stems from the fact that this naming in PyTorch 
-* in intended to be deprecated in favor of the current naming. 
-*/
+ * Tensor is the central resource of the system. It represents the core resources that are
+ * manipulated and stored and act as inputs and outputs to the system. Computational graphs 
+ * are built by performing operations on Tensors.
+ *
+ * Tensors are thin wrappers around a mathematical tensor (i.e. multidemnsional array) that 
+ * provide additional capabilities for calculating gradients and storing gradient information
+ * as well as hooking into the computational graph in which it participates.
+ * 
+ * This class corresponds to the `Variable` class in PyTorch's autograd, the difference in 
+ * naming here stems from the fact that this naming in PyTorch in intended to be deprecated 
+ * in favor of the current naming. 
+ */
 struct Tensor {
   xt::xarray<float> data;
   // The gradient of this node w.r.t. the ancestor on which backward was called.
