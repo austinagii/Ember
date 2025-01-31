@@ -11,6 +11,17 @@
 - **Next Steps**:  
   - [Outline what you plan to tackle next]
 
+## January 28 - 31, 2025 
+- **Task**: Add documentation for each subdirectory
+- **Progress**:  
+  - Added documentation for the autograd, ops and top level include directories
+- **Notes & Challenges**:  
+  - With writing all the documentation at the end it feels like some useful 
+    information and beginner context was lost. Next time I'll try to write docs
+    as I build.
+- **Next Steps**:  
+  - Note fixes and improvements I'd like to make and add them as issues on Github
+
 ## January 22, 2025
 - **Task**: Update arithmetic operations to all operate on multidimensional arrays
 - **Progress**:  
