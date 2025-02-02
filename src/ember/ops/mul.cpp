@@ -6,7 +6,7 @@ std::size_t MULTIPLICAND_INDEX = 0;
 std::size_t MULTIPLIER_INDEX = 1;
 
 static Tensor multiply_tensors(Tensor& multiplicand, Tensor& multiplier) {
-    Tensor product = Tensor::from_xarray(xt::eval(multiplicand.data * multiplier.data));  // xtensor handles broadcasting
+    Tensor product = Tensor::from_xarray_(xt::eval(multiplicand.data_ * multiplier.data_));  // xtensor handles broadcasting
     auto gradient_fn = new MulBackward(multiplicand, multiplier);
     gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
                                     {multiplicand.save(), multiplier.save()});
@@ -69,14 +69,14 @@ std::vector<Tensor> MulBackward::operator()(Tensor output_grad) {
     // For multiplication, partial derivatives are:
     // ∂(a*b)/∂a = b * output_grad
     // ∂(a*b)/∂b = a * output_grad
-    auto multiplicand_grad = calculate_local_mul_gradient(multiplicand.data, 
-                                                        multiplier.data, 
-                                                        output_grad.data);
-    auto multiplier_grad = calculate_local_mul_gradient(multiplier.data, 
-                                                      multiplicand.data, 
-                                                      output_grad.data);
+    auto multiplicand_grad = calculate_local_mul_gradient(multiplicand.data_, 
+                                                        multiplier.data_, 
+                                                        output_grad.data_);
+    auto multiplier_grad = calculate_local_mul_gradient(multiplier.data_, 
+                                                      multiplicand.data_, 
+                                                      output_grad.data_);
     
-    return {Tensor::from_xarray(multiplicand_grad), Tensor::from_xarray(multiplier_grad)};
+    return {Tensor::from_xarray_(multiplicand_grad), Tensor::from_xarray_(multiplier_grad)};
 }
 
 } // namespace ember

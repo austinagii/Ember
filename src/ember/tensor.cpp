@@ -15,19 +15,19 @@ Tensor::Tensor():
   gradient_accumulator(nullptr) {}
 
 Tensor::Tensor(double value) {
-  data = xt::xarray<double>({value});
+  data_ = xt::xarray<double>({value});
 }
 
 Tensor::Tensor(std::initializer_list<double> values) {
-  data = xt::xarray<double>(values);
+  data_ = xt::xarray<double>(values);
 }
 
 Tensor::Tensor(std::initializer_list<std::initializer_list<double>> values) {
-  data = xt::xarray<double>(values);
+  data_ = xt::xarray<double>(values);
 }
 
 Tensor::Tensor(std::initializer_list<std::initializer_list<std::initializer_list<double>>> values) {
-  data = xt::xarray<double>(values);
+  data_ = xt::xarray<double>(values);
 }
 
 // TODO: Refactor this code so that performing a top sort of the graph happens within the engine.
@@ -35,7 +35,7 @@ void Tensor::backward() {
   // Create engine instance for this backward pass
   autograd::Engine engine;
   Tensor gradient;
-  gradient.data = xt::ones_like(this->data);
+  gradient.data_ = xt::ones_like(this->data_);
   engine.grad_buffer[gradient_fn] = gradient; 
 
   // Perform topological sort
@@ -77,6 +77,22 @@ autograd::Node* Tensor::get_gradient_edge() {
 
 TensorSnapshot Tensor::save() {
   return TensorSnapshot(this);
+}
+
+bool operator==(const Tensor& left, const Tensor& right) {
+  return xt::all(xt::equal(left.data_, right.data_));
+}
+
+bool Tensor::equals_approx(const Tensor& other) {
+  return xt::allclose(this->data_, other.data_);
+}
+
+Tensor Tensor::ones_like(const Tensor& other) {
+  return Tensor::from_xarray_(xt::ones_like(other.data_));
+}
+
+Tensor Tensor::from_shape(std::initializer_list<size_t> shape) {
+    return Tensor::from_xarray_(xt::xarray<double>::from_shape(shape));
 }
 
 } // namespace ember

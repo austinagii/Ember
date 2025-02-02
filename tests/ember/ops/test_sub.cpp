@@ -12,30 +12,26 @@ TEST(TensorSubtraction, ScalarTensorsCanBeSubtracted) {
   Tensor b = {5.0};
   Tensor c = a - b;
 
-  auto difference = c.data;
-  auto expected_difference = xt::xarray<double>({-4.0});
-  EXPECT_TRUE(xt::allclose(difference, expected_difference));
+  EXPECT_EQ(c, Tensor({-4.0}));
 
   c.backward();
 
-  EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<double>{1.0}));
-  EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<double>{-1.0}));
+  EXPECT_EQ(*a.gradient, Tensor({1.0}));
+  EXPECT_EQ(*b.gradient, Tensor({-1.0}));
 }
 
 TEST(TensorSubtraction, MultidimensionalTensorsCanBeSubtracted) {
   Tensor a = {{1.0, 9.0}, {3.0, 2.2}};
   Tensor b = {{5.0, 3.0}, {2.0, 1.3}};
+
   Tensor c = a - b;
 
-  xt::xarray<double> difference = c.data;
-  xt::xarray<double> expected_difference = {{-4.0, 6.0}, {1.0, 0.9}};
-
-  EXPECT_TRUE(xt::allclose(difference, expected_difference));
+  EXPECT_TRUE(c.equals_approx(Tensor({{-4.0, 6.0}, {1.0, 0.9}})));
 
   c.backward();
 
-  EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<double>{{1.0, 1.0}, {1.0, 1.0}}));
-  EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<double>{{-1.0, -1.0}, {-1.0, -1.0}}));
+  EXPECT_EQ(*a.gradient, Tensor({{1.0, 1.0}, {1.0, 1.0}}));
+  EXPECT_EQ(*b.gradient, Tensor({{-1.0, -1.0}, {-1.0, -1.0}}));
 }
 
 TEST(TensorSubtraction, AnonymousIntermediateTensorsCanBeSubtracted) {
@@ -45,23 +41,23 @@ TEST(TensorSubtraction, AnonymousIntermediateTensorsCanBeSubtracted) {
   
   Tensor d = (c - Tensor({{3.0, 3.0}, {3.0, 3.0}})) - 
              (c - Tensor({{5.0, 5.0}, {5.0, 5.0}}));
-  EXPECT_TRUE(xt::allclose(d.data, xt::xarray<double>({{2.0, 2.0}, {2.0, 2.0}})));
+  EXPECT_EQ(d, Tensor({{2.0, 2.0}, {2.0, 2.0}}));
 
   d.backward();
-  EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<double>({{0.0, 0.0}, {0.0, 0.0}})));
-  EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<double>({{0.0, 0.0}, {0.0, 0.0}})));
+  EXPECT_EQ(*a.gradient, Tensor({{0.0, 0.0}, {0.0, 0.0}}));
+  EXPECT_EQ(*b.gradient, Tensor({{0.0, 0.0}, {0.0, 0.0}}));
 }
 
 TEST(TensorSubtraction, BroadcastingWorks) {
-    Tensor a = {1.0f, 2.0f, 3.0f};
-    Tensor b = {5.0f};  // Scalar to be broadcast
+    Tensor a = {1.0, 2.0, 3.0};
+    Tensor b = {5.0};  // Scalar to be broadcast
     Tensor c = a - b;
 
-    EXPECT_TRUE(xt::allclose(c.data, xt::xarray<float>{-4.0f, -3.0f, -2.0f}));
+    EXPECT_EQ(c, Tensor({-4.0, -3.0, -2.0}));
 
     c.backward();
-    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<float>{1.0f, 1.0f, 1.0f}));
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<float>{-3.0f}));
+    EXPECT_EQ(*a.gradient, Tensor({1.0, 1.0, 1.0}));
+    EXPECT_EQ(*b.gradient, Tensor({-3.0}));
 }
 
 TEST(TensorSubtraction, ZeroSubtractionPreservesGradients) {
@@ -69,11 +65,11 @@ TEST(TensorSubtraction, ZeroSubtractionPreservesGradients) {
     Tensor b = {1.0, 2.0, 3.0};
     Tensor c = a - b;
 
-    EXPECT_TRUE(xt::allclose(c.data, xt::xarray<double>{0.0, 0.0, 0.0}));
+    EXPECT_EQ(c, Tensor({0.0, 0.0, 0.0}));
 
     c.backward();
-    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<double>{1.0, 1.0, 1.0}));
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<double>{-1.0, -1.0, -1.0}));
+    EXPECT_EQ(*a.gradient, Tensor({1.0, 1.0, 1.0}));
+    EXPECT_EQ(*b.gradient, Tensor({-1.0, -1.0, -1.0}));
 }
 
 TEST(TensorSubtraction, GradientWithBroadcastAndScalar) {
@@ -84,7 +80,6 @@ TEST(TensorSubtraction, GradientWithBroadcastAndScalar) {
     c.backward();
 
     // Expected: ∂(m-s)/∂m = 1, ∂(m-s)/∂s = -sum(1)
-    EXPECT_TRUE(xt::allclose(matrix.gradient->data, xt::ones_like(matrix.data), 0.001));
-    EXPECT_TRUE(xt::allclose(scalar.gradient->data, xt::xarray<double>({-4.0}), 0.001));
+    EXPECT_EQ(*matrix.gradient, Tensor::ones_like(matrix));
+    EXPECT_EQ(*scalar.gradient, Tensor({-4.0}));
 }
-
