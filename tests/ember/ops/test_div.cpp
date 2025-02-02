@@ -10,17 +10,17 @@ using namespace ember;
 TEST(TensorDivision, ScalarTensorsCanBeDivided) {
     Tensor a = {24.0};
     Tensor b = {6.0};
+
     Tensor c = a / b;
 
-    auto quotient = c.data;
-    auto expected_quotient = xt::xarray<double>({4.0});
-    EXPECT_TRUE(xt::allclose(quotient, expected_quotient));
+    Tensor expected_quotient = {4.0};
+    EXPECT_TRUE(c.equals_approx(expected_quotient));
 
     c.backward();
     // ∂c/∂a = 1/b = 1/6
+    EXPECT_TRUE(a.gradient->equals_approx(Tensor{1.0/6.0}));
     // ∂c/∂b = -a/b² = -24/36
-    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<double>{1.0/6.0}));
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<double>{-2.0/3.0}));
+    EXPECT_TRUE(b.gradient->equals_approx(Tensor{-24.0/36.0}));
 }
 
 TEST(TensorDivision, MultidimensionalTensorsCanBeDivided) {
@@ -28,35 +28,33 @@ TEST(TensorDivision, MultidimensionalTensorsCanBeDivided) {
     Tensor b = {{3.0, 3.0}, {2.0, 1.0}};
     Tensor c = a / b;
 
-    xt::xarray<double> quotient = c.data;
-    xt::xarray<double> expected_quotient = {{4.0, 3.0}, {3.0, 3.0}};
-
-    EXPECT_TRUE(xt::allclose(quotient, expected_quotient));
+    Tensor expected_quotient = {{4.0, 3.0}, {3.0, 3.0}};
+    EXPECT_TRUE(c.equals_approx(expected_quotient));
 
     c.backward();
     // ∂c/∂a = 1/b
-    EXPECT_TRUE(xt::allclose(a.gradient->data, 
-                            xt::xarray<double>{{1.0/3.0, 1.0/3.0}, 
-                                            {1.0/2.0, 1.0/1.0}}));
+    EXPECT_TRUE(a.gradient->equals_approx(Tensor{{1.0/3.0, 1.0/3.0}, 
+                                                 {1.0/2.0, 1.0/1.0}}));
     // ∂c/∂b = -a/b²
-    EXPECT_TRUE(xt::allclose(b.gradient->data, 
-                            xt::xarray<double>{{-4.0/3.0, -3.0/3.0}, 
-                                            {-3.0/2.0, -3.0/1.0}}));
+    EXPECT_TRUE(b.gradient->equals_approx(Tensor{{-4.0/3.0, -3.0/3.0}, 
+                                                 {-3.0/2.0, -3.0/1.0}}));
 }
 
 TEST(TensorDivision, AnonymousIntermediateTensorsCanBeDivided) {
     Tensor a = {{8.0, 6.0}, {4.0, 2.0}};
     Tensor b = {{2.0, 2.0}, {2.0, 2.0}};
+
     Tensor c = a / b;
     
     Tensor d = (c / Tensor({{2.0, 2.0}, {2.0, 2.0}})) / 
                (c / Tensor({{4.0, 4.0}, {4.0, 4.0}}));
-    EXPECT_TRUE(xt::allclose(d.data, xt::xarray<double>({{2.0, 2.0}, {2.0, 2.0}})));
+    EXPECT_TRUE(d.equals_approx(Tensor{{2.0, 2.0}, {2.0, 2.0}}));
 
     d.backward();
-    // Complex chain of divisions should still maintain correct gradients
-    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<double>({{0.0, 0.0}, {0.0, 0.0}})));
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<double>({{0.0, 0.0}, {0.0, 0.0}})));
+    // ∂d/∂a = 0
+    EXPECT_TRUE(a.gradient->equals_approx(Tensor{{0.0, 0.0}, {0.0, 0.0}}));
+    // ∂d/∂b = 0
+    EXPECT_TRUE(b.gradient->equals_approx(Tensor{{0.0, 0.0}, {0.0, 0.0}}));
 }
 
 TEST(TensorDivision, BroadcastingWorks) {
@@ -64,13 +62,13 @@ TEST(TensorDivision, BroadcastingWorks) {
     Tensor b = {3.0};  // Scalar to be broadcast
     Tensor c = a / b;
 
-    EXPECT_TRUE(xt::allclose(c.data, xt::xarray<double>{2.0, 3.0, 4.0}));
+    EXPECT_TRUE(c.equals_approx(Tensor{2.0, 3.0, 4.0}));
 
     c.backward();
     // ∂c/∂a = 1/b = 1/3 for each element
-    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<double>{1.0/3.0, 1.0/3.0, 1.0/3.0}));
+    EXPECT_TRUE(a.gradient->equals_approx(Tensor{1.0/3.0, 1.0/3.0, 1.0/3.0}));
     // ∂c/∂b = sum(-a/b²) = -(6+9+12)/9 = -3
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<double>{-3.0}));
+    EXPECT_TRUE(b.gradient->equals_approx(Tensor{-3.0}));
 }
 
 TEST(TensorDivision, DivisionByOne) {
@@ -78,11 +76,13 @@ TEST(TensorDivision, DivisionByOne) {
     Tensor b = {1.0, 1.0, 1.0};
     Tensor c = a / b;
 
-    EXPECT_TRUE(xt::allclose(c.data, xt::xarray<double>{1.0, 2.0, 3.0}));
+    EXPECT_TRUE(c.equals_approx(Tensor{1.0, 2.0, 3.0}));
 
     c.backward();
-    EXPECT_TRUE(xt::allclose(a.gradient->data, xt::xarray<double>{1.0, 1.0, 1.0}));
-    EXPECT_TRUE(xt::allclose(b.gradient->data, xt::xarray<double>{-1.0, -2.0, -3.0}));
+    // ∂c/∂a = 1/b
+    EXPECT_TRUE(a.gradient->equals_approx(Tensor{1.0, 1.0, 1.0}));
+    // ∂c/∂b = -a/b²
+    EXPECT_TRUE(b.gradient->equals_approx(Tensor{-1.0, -2.0, -3.0}));
 }
 
 TEST(TensorDivision, DivisionByZeroThrows) {
@@ -99,10 +99,10 @@ TEST(TensorDivision, GradientWithBroadcastAndScalar) {
     c.backward();
 
     // Expected: ∂(a/s)/∂a = 1/s
-    xt::xarray<double> expected_grad_a = xt::ones_like(a.data) / scalar.data;
-    EXPECT_TRUE(xt::allclose(a.gradient->data, expected_grad_a, 0.001));
+    EXPECT_TRUE(a.gradient->equals_approx(Tensor{{1.0/2.0, 1.0/2.0}, 
+                                                 {1.0/2.0, 1.0/2.0}}));
 
     // Expected: ∂(a/s)/∂s = -a/s²
-    xt::xarray<double> expected_grad_scalar = {-xt::sum(a.data / (scalar.data * scalar.data))};
-    EXPECT_TRUE(xt::allclose(scalar.gradient->data, expected_grad_scalar, 0.001));
+    Tensor expected_grad_scalar = {-1.0/4.0 - 2.0/4.0 - 3.0/4.0 - 4.0/4.0};
+    EXPECT_TRUE(scalar.gradient->equals_approx(expected_grad_scalar));
 } 

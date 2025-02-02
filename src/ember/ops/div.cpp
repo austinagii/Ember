@@ -6,11 +6,11 @@ std::size_t DIVIDEND_INDEX = 0;
 std::size_t DIVISOR_INDEX = 1;
 
 static Tensor divide_tensors(Tensor& dividend, Tensor& divisor) {
-    if (xt::any(xt::equal(divisor.data, 0.0))) {
+    if (xt::any(xt::equal(divisor.data_, 0.0))) {
         throw std::runtime_error("Division by zero encountered");
     }
 
-    Tensor quotient = Tensor::from_xarray(xt::eval(dividend.data / divisor.data));  // xtensor handles broadcasting
+    Tensor quotient = Tensor::from_xarray_(xt::eval(dividend.data_ / divisor.data_));  // xtensor handles broadcasting
     auto gradient_fn = new DivBackward(dividend, divisor);
     gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
                                     {dividend.save(), divisor.save()});
@@ -71,14 +71,14 @@ std::vector<Tensor> DivBackward::operator()(Tensor output_grad) {
     // ∂z/∂y = -x/y²
     
     // Calculate raw gradients with broadcasting
-    auto dividend_grad_raw = xt::eval(output_grad.data / divisor.data);
-    auto divisor_grad_raw = xt::eval(output_grad.data * (-dividend.data / (divisor.data * divisor.data)));
+    auto dividend_grad_raw = xt::eval(output_grad.data_ / divisor.data_);
+    auto divisor_grad_raw = xt::eval(output_grad.data_ * (-dividend.data_ / (divisor.data_ * divisor.data_)));
 
     // Reduce gradients along broadcast dimensions
-    auto dividend_grad = reduce_broadcast(dividend_grad_raw, dividend.data);
-    auto divisor_grad = reduce_broadcast(divisor_grad_raw, divisor.data);
+    auto dividend_grad = reduce_broadcast(dividend_grad_raw, dividend.data_);
+    auto divisor_grad = reduce_broadcast(divisor_grad_raw, divisor.data_);
 
-    return {Tensor::from_xarray(dividend_grad), Tensor::from_xarray(divisor_grad)};
+    return {Tensor::from_xarray_(dividend_grad), Tensor::from_xarray_(divisor_grad)};
 }
 
 } // namespace ember

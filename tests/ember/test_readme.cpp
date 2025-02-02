@@ -7,46 +7,30 @@ using namespace ember;
 
 TEST(ReadmeExample, ComputationAndGradientsAreCorrect) {
     // Create tensors
-    Tensor a = {{1.0f, 2.0f}, {3.0f, 4.0f}};
-    Tensor b = {{2.0f, 1.0f}, {0.5f, 2.0f}};
-    Tensor scalar = 3.0f;
+    Tensor a = {{1.0, 2.0}, {3.0, 4.0}};
+    Tensor b = {{2.0, 1.0}, {0.5, 2.0}};
+    Tensor scalar = 3.0;
 
     // Perform element-wise operations with broadcasting
-    auto c = (a * b) + scalar;
-    auto d = c / 2;
-    auto e = (d * a - b) / (c + scalar); // Uncommented calculation for e
+    Tensor c = (a * b) + scalar;
+    Tensor d = c / 2;
+    Tensor e = (d * a - b) / (c + scalar);
 
     // Expected results for d and e
-    xt::xarray<float> expected_result_d = {
-        {2.5f, 2.5f},
-        {2.25f, 5.5f}
-    };
-
-    xt::xarray<float> expected_result_e = {
-        {0.0625f, 0.5f},
-        {0.8333333f, 1.4285714f}
-    };
+    Tensor expected_result_d = {{2.5, 2.5}, {2.25, 5.5}};
+    Tensor expected_result_e = {{0.0625, 0.5}, {0.8333333, 1.4285714}};
 
     // Compute gradients through backpropagation
     e.backward();
 
     // Expected gradients when backpropagating from e
-    xt::xarray<float> expected_grad_a = {
-        {0.4218750f, 0.3750000f},
-        {0.3444445f, 0.4744898f}
-    };
+    Tensor expected_grad_a = {{0.421875, 0.375}, {0.3444445, 0.4744898}};
+    Tensor expected_grad_b = {{-0.0703125,  0.0000000}, {0.1333334,  0.0918367}};
+    Tensor expected_grad_scalar = {-0.0365717};
 
-    xt::xarray<float> expected_grad_b = {
-        {-0.0703125f,  0.0000000f},
-        {0.1333334f,  0.0918367f}
-    };
-
-    xt::xarray<float> expected_grad_scalar = {-0.0365717};
-
-    // Assertions
-    EXPECT_TRUE(xt::allclose(d.data, expected_result_d, 0.001f)) << "Mismatch in tensor d values.";
-    EXPECT_TRUE(xt::allclose(e.data, expected_result_e, 0.001f)) << "Mismatch in tensor e values.";
-    EXPECT_TRUE(xt::allclose(a.gradient->data, expected_grad_a, 0.001f)) << "Mismatch in gradients for tensor a.";
-    EXPECT_TRUE(xt::allclose(b.gradient->data, expected_grad_b, 0.001f)) << "Mismatch in gradients for tensor b.";
-    EXPECT_TRUE(xt::allclose(scalar.gradient->data, expected_grad_scalar, 0.001f)) << "Mismatch in gradients for scalar.";
+    EXPECT_TRUE(d.equals_approx(expected_result_d));
+    EXPECT_TRUE(e.equals_approx(expected_result_e));
+    EXPECT_TRUE(a.gradient->equals_approx(expected_grad_a));
+    EXPECT_TRUE(b.gradient->equals_approx(expected_grad_b));
+    EXPECT_TRUE(scalar.gradient->equals_approx(expected_grad_scalar));
 }

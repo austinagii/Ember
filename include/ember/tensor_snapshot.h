@@ -7,7 +7,7 @@ namespace ember {
     struct Tensor;  // Forward declaration
 
     struct TensorSnapshot {
-        xt::xarray<double> data;
+        xt::xarray<double> data_;
         TensorSnapshot(Tensor* tensor);
     };
 } // namespace ember

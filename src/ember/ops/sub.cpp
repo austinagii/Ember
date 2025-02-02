@@ -6,7 +6,7 @@ std::size_t MINUEND_INDEX = 0;
 std::size_t SUBTRAHEND_INDEX = 1;
 
 static Tensor subtract_tensors(Tensor& minuend, Tensor& subtrahend) {
-  Tensor difference = Tensor::from_xarray(xt::eval(minuend.data - subtrahend.data));
+  Tensor difference = Tensor::from_xarray_(xt::eval(minuend.data_ - subtrahend.data_));
   auto gradient_fn = new SubBackward(minuend, subtrahend);
   gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
                                   {minuend.save(), subtrahend.save()});
@@ -61,8 +61,8 @@ std::vector<Tensor> SubBackward::operator()(Tensor output_grad) {
   auto minuend = saved_tensors[MINUEND_INDEX];
   auto subtrahend = saved_tensors[SUBTRAHEND_INDEX];
 
-  auto minuend_grad = Tensor::from_xarray(calculate_local_sub_gradient(minuend.data, output_grad.data));
-  auto subtrahend_grad = Tensor::from_xarray(-1 * calculate_local_sub_gradient(subtrahend.data, output_grad.data));
+  auto minuend_grad = Tensor::from_xarray_(calculate_local_sub_gradient(minuend.data_, output_grad.data_));
+  auto subtrahend_grad = Tensor::from_xarray_(-1 * calculate_local_sub_gradient(subtrahend.data_, output_grad.data_));
   return {minuend_grad, subtrahend_grad};
 }
 
