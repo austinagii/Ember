@@ -119,7 +119,7 @@ To ensure that Ember isn't just a toy, it needs to be capable of building a full
 
 I'm dedicated to making Ember a useful tool for learning and exploring neural networks. Any feedback and / or contributions are invaluable!
  - Have ideas? Open a discussion or submit an issue.
- - Want to contribute? Just go ahead, there's no contributing guide yet.
+ - Want to contribute? Just create a pull request with a clear description. 
  - Stay updated! Follow the project to stay up to date.
 
 # License
