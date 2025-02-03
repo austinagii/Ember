@@ -18,24 +18,28 @@
 #include <functional>  
 #include <vector>
 #include <type_traits>
+#include <optional>
+
+template <typename T>
+using init_list = std::initializer_list<T>;
 
 namespace ember {
 
 /**
- * Tensor is the central resource of the system. It represents the core resources that are
- * manipulated and stored and act as inputs and outputs to the system. Computational graphs 
- * are built by performing operations on Tensors.
+ * Tensor is the central resource of the system. It represents the core resources 
+ * that are manipulated and stored and act as inputs and outputs to the system. 
+ * Computational graphs are built by performing operations on Tensors.
  *
- * Tensors are thin wrappers around a mathematical tensor (i.e. multidemnsional array) that 
- * provide additional capabilities for calculating gradients and storing gradient information
- * as well as hooking into the computational graph in which it participates.
+ * Tensors are thin wrappers around a mathematical tensor (i.e. multidemnsional 
+ * array) that provide additional capabilities for calculating gradients and 
+ * storing gradient information as well as hooking into the computational graph 
+ * in which it participates.
  * 
- * This class corresponds to the `Variable` class in PyTorch's autograd, the difference in 
- * naming here stems from the fact that this naming in PyTorch in intended to be deprecated 
- * in favor of the current naming. 
+ * This class corresponds to the `Variable` class in PyTorch's autograd, the 
+ * difference in naming here stems from the fact that this naming in PyTorch in 
+ * intended to be deprecated in favor of the current naming. 
  */
 struct Tensor {
-
   // The multidemnsional array of data this tensor contains.
   xt::xarray<double> data_;
   // The gradient of this node w.r.t. the ancestor on which backward was called.
@@ -44,20 +48,59 @@ struct Tensor {
   autograd::Node* gradient_fn = nullptr;
   // Accumulates a sum of gradients for this tensor if it is a leaf tensor.
   autograd::Node* gradient_accumulator = nullptr;
+  // Whether this tensor requires gradients to be computed and stored.
+  bool requires_grad = false;
 
   Tensor();
 
-  Tensor(double value);
+  /**
+   * @brief Constructs a tensor with a single value.
+   * @param value The value to initialize the tensor with
+   * @param requires_grad If true, the tensor will track gradients for autograd
+   * @example
+   *   Tensor t(1.0); // Creates a tensor with a single value 1.0
+   */
+  Tensor(double value, bool requires_grad = false);
   
-  // 1D tensor constructor
-  Tensor(std::initializer_list<double> values);
+  /**
+   * @brief Constructs a 1-dimensional tensor from a list of values.
+   * @param values The values to initialize the tensor with
+   * @param requires_grad If true, the tensor will track gradients for autograd
+   * @example
+   *   Tensor t({1.0, 2.0, 3.0}); // Creates a 1D tensor [1.0, 2.0, 3.0]
+   */
+  Tensor(init_list<double> values, bool requires_grad = false);
 
-  // 2D tensor constructor
-  Tensor(std::initializer_list<std::initializer_list<double>> values);
+  /**
+   * @brief Constructs a 2-dimensional tensor from a nested list of values.
+   * @param values The values to initialize the tensor with
+   * @param requires_grad If true, the tensor will track gradients for autograd
+   * @example
+   *   Tensor t({
+   *     {1.0, 2.0},
+   *     {3.0, 4.0}
+   *   }); // Creates a 2x2 tensor [[1.0, 2.0], [3.0, 4.0]]
+   */
+  Tensor(init_list<init_list<double>> values, bool requires_grad = false);
 
-  // 3D tensor constructor
-  Tensor(std::initializer_list<std::initializer_list<std::initializer_list<double>>> values);
+  /**
+   * @brief Constructs a 3-dimensional tensor from a doubly-nested list of values.
+   * @param values The values to initialize the tensor with
+   * @param requires_grad If true, the tensor will track gradients for autograd
+   * @example
+   *   Tensor t({
+   *     {{1.0, 2.0}, {3.0, 4.0}},
+   *     {{5.0, 6.0}, {7.0, 8.0}}
+   *   }); // Creates a 2x2x2 tensor
+   */
+  Tensor(init_list<init_list<init_list<double>>> values, bool requires_grad = false);
   
+  /**
+   * @brief Copy constructor that creates a deep copy of another tensor
+   * @param other The tensor to copy from
+   */
+  Tensor(const Tensor& other);
+
   static Tensor from_xarray_(xt::xarray<double> data) {
     auto t = Tensor();
     t.data_ = data;

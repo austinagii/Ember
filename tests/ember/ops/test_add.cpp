@@ -10,8 +10,8 @@
 using namespace ember;
 
 TEST(TensorAddition, ScalarTensorsCanBeAdded) {
-  Tensor a = {1.0};
-  Tensor b = {5.0};
+  Tensor a({1.0}, true);
+  Tensor b({5.0}, true);
 
   Tensor c = a + b;
 
@@ -24,8 +24,8 @@ TEST(TensorAddition, ScalarTensorsCanBeAdded) {
 }
 
 TEST(TensorAddition, MultidimensionalTensorsCanBeAdded) {
-  Tensor a = {{1.0, 9.0}, {3.0, 2.2}};
-  Tensor b = {{5.0, 3.0}, {2.0, 1.3}};
+  Tensor a({{1.0, 9.0}, {3.0, 2.2}}, true);
+  Tensor b({{5.0, 3.0}, {2.0, 1.3}}, true);
 
   Tensor c = a + b;
 
@@ -38,8 +38,8 @@ TEST(TensorAddition, MultidimensionalTensorsCanBeAdded) {
 }
 
 TEST(TensorAddition, AnonymousIntermediateTensorsCanBeAdded) {
-  Tensor a = {{7.0f, 3.0f}, {4.0f, 1.0f}};
-  Tensor b = {{8.0f, 2.0f}, {5.0f, 0.0f}};
+  Tensor a({{7.0f, 3.0f}, {4.0f, 1.0f}}, true);
+  Tensor b({{8.0f, 2.0f}, {5.0f, 0.0f}}, true);
 
   Tensor c = a + b;
   Tensor d = (c + Tensor({{3.0, 3.0}, {3.0, 3.0}})) + 
@@ -54,8 +54,8 @@ TEST(TensorAddition, AnonymousIntermediateTensorsCanBeAdded) {
 }
 
 TEST(TensorAddition, BroadcastingWorks) {
-    Tensor a = {1.0f, 2.0f, 3.0f};
-    Tensor b = {5.0f};
+    Tensor a({1.0f, 2.0f, 3.0f}, true);
+    Tensor b({5.0f}, true);
 
     Tensor c = a + b;
 
@@ -68,8 +68,8 @@ TEST(TensorAddition, BroadcastingWorks) {
 }
 
 TEST(TensorAddition, ZeroAdditionPreservesValues) {
-    Tensor a = {1.0, 2.0, 3.0};
-    Tensor b = {0.0, 0.0, 0.0};
+    Tensor a({1.0, 2.0, 3.0}, true);
+    Tensor b({0.0, 0.0, 0.0}, true);
 
     Tensor c = a + b;
 
@@ -82,8 +82,8 @@ TEST(TensorAddition, ZeroAdditionPreservesValues) {
 }
 
 TEST(TensorAddition, GradientWithBroadcastAndScalar) {
-    Tensor matrix = {{1.0, 2.0}, {3.0, 4.0}};
-    Tensor scalar = {2.0};
+    Tensor matrix({{1.0, 2.0}, {3.0, 4.0}}, true);
+    Tensor scalar({2.0}, true);
     
     auto c = matrix + scalar;
     c.backward();
@@ -93,8 +93,9 @@ TEST(TensorAddition, GradientWithBroadcastAndScalar) {
 }
 
 TEST(TensorAddition, GradientWithTensorsOfDifferentShapes) {
-    Tensor a = {{{1.0, 2.0}, {3.0, 4.0}}, {{5.0, 6.0}, {7.0, 8.0}}};
-    Tensor b = {3.0};
+    Tensor a({{{1.0, 2.0}, {3.0, 4.0}}, 
+              {{5.0, 6.0}, {7.0, 8.0}}}, true);
+    Tensor b({3.0}, true);
     
     auto c = a + b;
     c.backward();
@@ -104,10 +105,10 @@ TEST(TensorAddition, GradientWithTensorsOfDifferentShapes) {
 }
 
 TEST(TensorAddition, ThreeDimensionalWithScalar) {
-    Tensor a = {{{1.0, 2.0}, {3.0, 4.0}},
-                {{5.0, 6.0}, {7.0, 8.0}}};
+    Tensor a({{{1.0, 2.0}, {3.0, 4.0}},
+              {{5.0, 6.0}, {7.0, 8.0}}}, true);
+    Tensor b({2.0}, true);
 
-    Tensor b = {2.0};
     Tensor c = a + b;
 
     EXPECT_EQ(c, Tensor({{{3.0, 4.0}, {5.0, 6.0}},
@@ -120,13 +121,14 @@ TEST(TensorAddition, ThreeDimensionalWithScalar) {
 }
 
 TEST(TensorAddition, SingleElementBroadcastToLarge) {
-    Tensor a({1.0f});
+    Tensor a({1.0f}, true);
     
     Tensor b = Tensor::from_shape({2, 2, 2});
     b(0,0,0) = 1.0; b(0,0,1) = 2.0;
     b(0,1,0) = 3.0; b(0,1,1) = 4.0;
     b(1,0,0) = 5.0; b(1,0,1) = 6.0;
     b(1,1,0) = 7.0; b(1,1,1) = 8.0;
+    b.requires_grad = true;
 
     Tensor c = a + b;
     Tensor expected = {{{2.0, 3.0}, {4.0, 5.0}},
@@ -142,12 +144,14 @@ TEST(TensorAddition, SingleElementBroadcastToLarge) {
 
 // Update ComplexBroadcasting test to match mul version
 TEST(TensorAddition, ComplexBroadcasting) {
-    auto a = Tensor::from_shape({2, 2, 1});
+    Tensor a = Tensor::from_shape({2, 2, 1});
     a(0,0,0) = 1.0; a(0,1,0) = 2.0;
     a(1,0,0) = 3.0; a(1,1,0) = 4.0;
+    a.requires_grad = true;
 
-    auto b = Tensor::from_shape({1, 1, 3});
+    Tensor b = Tensor::from_shape({1, 1, 3});
     b(0,0,0) = 1.0; b(0,0,1) = 2.0; b(0,0,2) = 3.0;
+    b.requires_grad = true;
 
     Tensor c = a + b;
 

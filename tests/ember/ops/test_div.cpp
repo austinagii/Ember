@@ -8,8 +8,8 @@
 using namespace ember;
 
 TEST(TensorDivision, ScalarTensorsCanBeDivided) {
-    Tensor a = {24.0};
-    Tensor b = {6.0};
+    Tensor a({24.0}, true);
+    Tensor b({6.0}, true);
 
     Tensor c = a / b;
 
@@ -24,8 +24,8 @@ TEST(TensorDivision, ScalarTensorsCanBeDivided) {
 }
 
 TEST(TensorDivision, MultidimensionalTensorsCanBeDivided) {
-    Tensor a = {{12.0, 9.0}, {6.0, 3.0}};
-    Tensor b = {{3.0, 3.0}, {2.0, 1.0}};
+    Tensor a({{12.0, 9.0}, {6.0, 3.0}}, true);
+    Tensor b({{3.0, 3.0}, {2.0, 1.0}}, true);
     Tensor c = a / b;
 
     Tensor expected_quotient = {{4.0, 3.0}, {3.0, 3.0}};
@@ -41,8 +41,8 @@ TEST(TensorDivision, MultidimensionalTensorsCanBeDivided) {
 }
 
 TEST(TensorDivision, AnonymousIntermediateTensorsCanBeDivided) {
-    Tensor a = {{8.0, 6.0}, {4.0, 2.0}};
-    Tensor b = {{2.0, 2.0}, {2.0, 2.0}};
+    Tensor a({{8.0, 6.0}, {4.0, 2.0}}, true);
+    Tensor b({{2.0, 2.0}, {2.0, 2.0}}, true);
 
     Tensor c = a / b;
     
@@ -58,8 +58,8 @@ TEST(TensorDivision, AnonymousIntermediateTensorsCanBeDivided) {
 }
 
 TEST(TensorDivision, BroadcastingWorks) {
-    Tensor a = {6.0, 9.0, 12.0};
-    Tensor b = {3.0};  // Scalar to be broadcast
+    Tensor a({6.0, 9.0, 12.0}, true);
+    Tensor b({3.0}, true);  // Scalar to be broadcast
     Tensor c = a / b;
 
     EXPECT_TRUE(c.equals_approx(Tensor{2.0, 3.0, 4.0}));
@@ -72,8 +72,8 @@ TEST(TensorDivision, BroadcastingWorks) {
 }
 
 TEST(TensorDivision, DivisionByOne) {
-    Tensor a = {1.0, 2.0, 3.0};
-    Tensor b = {1.0, 1.0, 1.0};
+    Tensor a({1.0, 2.0, 3.0}, true);
+    Tensor b({1.0, 1.0, 1.0}, true);
     Tensor c = a / b;
 
     EXPECT_TRUE(c.equals_approx(Tensor{1.0, 2.0, 3.0}));
@@ -86,16 +86,16 @@ TEST(TensorDivision, DivisionByOne) {
 }
 
 TEST(TensorDivision, DivisionByZeroThrows) {
-    Tensor a = {1.0};
-    Tensor b = {0.0};
+    Tensor a({1.0}, true);
+    Tensor b({0.0}, true);
     EXPECT_THROW(a / b, std::runtime_error);
 }
 
 TEST(TensorDivision, GradientWithBroadcastAndScalar) {
-    Tensor a = {{1.0, 2.0}, {3.0, 4.0}};
-    Tensor scalar = {2.0};
+    Tensor a({{1.0, 2.0}, {3.0, 4.0}}, true);
+    Tensor scalar({2.0}, true);
     
-    auto c = a / scalar;
+    Tensor c = a / scalar;
     c.backward();
 
     // Expected: ∂(a/s)/∂a = 1/s

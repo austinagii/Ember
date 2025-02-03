@@ -7,9 +7,9 @@ using namespace ember;
 
 TEST(ReadmeExample, ComputationAndGradientsAreCorrect) {
     // Create tensors
-    Tensor a = {{1.0, 2.0}, {3.0, 4.0}};
-    Tensor b = {{2.0, 1.0}, {0.5, 2.0}};
-    Tensor scalar = 3.0;
+    Tensor a({{1.0, 2.0}, {3.0, 4.0}}, true);
+    Tensor b({{2.0, 1.0}, {0.5, 2.0}}, true);
+    Tensor scalar({3.0}, true);
 
     // Perform element-wise operations with broadcasting
     Tensor c = (a * b) + scalar;

@@ -7,14 +7,16 @@ std::size_t DIVISOR_INDEX = 1;
 
 static Tensor divide_tensors(Tensor& dividend, Tensor& divisor) {
     if (xt::any(xt::equal(divisor.data_, 0.0))) {
-        throw std::runtime_error("Division by zero encountered");
+        throw std::runtime_error("Division by zero is not allowed");
     }
+    Tensor quotient = Tensor::from_xarray_(xt::eval(dividend.data_ / divisor.data_));
 
-    Tensor quotient = Tensor::from_xarray_(xt::eval(dividend.data_ / divisor.data_));  // xtensor handles broadcasting
-    auto gradient_fn = new DivBackward(dividend, divisor);
-    gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
-                                    {dividend.save(), divisor.save()});
-    quotient.gradient_fn = gradient_fn;
+    if (dividend.requires_grad || divisor.requires_grad) {
+        quotient.gradient_fn = new DivBackward(dividend, divisor);
+        quotient.gradient_fn->saved_tensors.insert(quotient.gradient_fn->saved_tensors.begin(), 
+                                                   {dividend.save(), divisor.save()});
+        quotient.requires_grad = true;
+    }
     return quotient;
 }
 
@@ -35,8 +37,12 @@ Tensor operator/(Tensor&& dividend, Tensor&& divisor) {
 }
 
 DivBackward::DivBackward(Tensor& dividend, Tensor& divisor) {
-    edges.push_back(autograd::Edge(0, dividend.get_gradient_edge()));
-    edges.push_back(autograd::Edge(1, divisor.get_gradient_edge()));
+    if (dividend.requires_grad) {
+        edges.push_back(autograd::Edge(0, dividend.get_gradient_edge()));
+    }
+    if (divisor.requires_grad) {
+        edges.push_back(autograd::Edge(1, divisor.get_gradient_edge()));
+    }
 }
 
 xt::xarray<float> reduce_broadcast(const xt::xarray<float>& grad, 

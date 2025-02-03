@@ -6,15 +6,16 @@ std::size_t MULTIPLICAND_INDEX = 0;
 std::size_t MULTIPLIER_INDEX = 1;
 
 static Tensor multiply_tensors(Tensor& multiplicand, Tensor& multiplier) {
-    Tensor product = Tensor::from_xarray_(xt::eval(multiplicand.data_ * multiplier.data_));  // xtensor handles broadcasting
-    auto gradient_fn = new MulBackward(multiplicand, multiplier);
-    gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
-                                    {multiplicand.save(), multiplier.save()});
-    product.gradient_fn = gradient_fn;
+    Tensor product = Tensor::from_xarray_(xt::eval(multiplicand.data_ * multiplier.data_));
+    if (multiplicand.requires_grad || multiplier.requires_grad) {
+        product.gradient_fn = new MulBackward(multiplicand, multiplier);
+        product.gradient_fn->saved_tensors.insert(product.gradient_fn->saved_tensors.begin(), 
+                                                  {multiplicand.save(), multiplier.save()});
+        product.requires_grad = true;
+    }
     return product;
 }
 
-// Operator overloads for different value categories
 Tensor operator*(Tensor& multiplicand, Tensor& multiplier) {
     return multiply_tensors(multiplicand, multiplier);
 }
@@ -32,13 +33,17 @@ Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier) {
 }
 
 MulBackward::MulBackward(Tensor& multiplicand, Tensor& multiplier) {
-    edges.push_back(autograd::Edge(0, multiplicand.get_gradient_edge()));
-    edges.push_back(autograd::Edge(1, multiplier.get_gradient_edge()));
+    if (multiplicand.requires_grad) {
+        edges.push_back(autograd::Edge(MULTIPLICAND_INDEX, multiplicand.get_gradient_edge()));
+    }
+    if (multiplier.requires_grad) {
+        edges.push_back(autograd::Edge(MULTIPLIER_INDEX, multiplier.get_gradient_edge()));
+    }
 }
 
 xt::xarray<float> calculate_local_mul_gradient(xt::xarray<float> input, 
-                                             xt::xarray<float> other, 
-                                             xt::xarray<float> output_grad) {
+                                               xt::xarray<float> other, 
+                                               xt::xarray<float> output_grad) {
     auto input_shape = input.shape();
     auto input_rank = input_shape.size();
     auto output_shape = output_grad.shape();
@@ -51,7 +56,7 @@ xt::xarray<float> calculate_local_mul_gradient(xt::xarray<float> input,
     }
 
     // For multiplication, gradient is: output_grad * other
-    auto input_grad = xt::eval(output_grad * other);  // xtensor handles broadcasting
+    auto input_grad = xt::eval(output_grad * other);
     
     // Reduce along broadcast dimensions
     for (int i = output_rank - 1; i >= 0; i--) {

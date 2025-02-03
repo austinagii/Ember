@@ -14,20 +14,26 @@ Tensor::Tensor():
   gradient_fn(nullptr), 
   gradient_accumulator(nullptr) {}
 
-Tensor::Tensor(double value) {
-  data_ = xt::xarray<double>({value});
-}
+Tensor::Tensor(double value, bool requires_grad)
+: data_({value}), requires_grad(requires_grad) {}
 
-Tensor::Tensor(std::initializer_list<double> values) {
-  data_ = xt::xarray<double>(values);
-}
+Tensor::Tensor(init_list<double> values, bool requires_grad)
+: data_(values), requires_grad(requires_grad) {}
 
-Tensor::Tensor(std::initializer_list<std::initializer_list<double>> values) {
-  data_ = xt::xarray<double>(values);
-}
+Tensor::Tensor(init_list<init_list<double>> values, bool requires_grad)
+: data_(values), requires_grad(requires_grad) {}
 
-Tensor::Tensor(std::initializer_list<std::initializer_list<std::initializer_list<double>>> values) {
-  data_ = xt::xarray<double>(values);
+Tensor::Tensor(init_list<init_list<init_list<double>>> values, bool requires_grad)
+: data_(values), requires_grad(requires_grad) {}
+
+Tensor::Tensor(const Tensor& other)
+    : data_(other.data_),
+      gradient_fn(other.gradient_fn),
+      gradient_accumulator(other.gradient_accumulator),
+      requires_grad(other.requires_grad) {
+  if (other.gradient != nullptr) {
+    gradient = new Tensor(*other.gradient);
+  }
 }
 
 // TODO: Refactor this code so that performing a top sort of the graph happens within the engine.

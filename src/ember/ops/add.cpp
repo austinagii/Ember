@@ -13,10 +13,13 @@ std::size_t ADDEND_INDEX = 1;
 
 static Tensor add_tensors(Tensor& augend, Tensor& addend) {
   Tensor sum = Tensor::from_xarray_(xt::eval(augend.data_ + addend.data_));
-  auto gradient_fn = new AddBackward(augend, addend);
-  gradient_fn->saved_tensors.insert(gradient_fn->saved_tensors.begin(), 
-                                    {augend.save(), addend.save()});
-  sum.gradient_fn = gradient_fn;
+
+  if (augend.requires_grad || addend.requires_grad) {
+    sum.gradient_fn = new AddBackward(augend, addend);
+    sum.gradient_fn->saved_tensors.insert(sum.gradient_fn->saved_tensors.begin(), 
+                                        {augend.save(), addend.save()});
+    sum.requires_grad = true;
+  }
   return sum;
 }
 
@@ -37,8 +40,12 @@ Tensor operator+(Tensor&& augend, Tensor&& addend) {
 }
 
 AddBackward::AddBackward(Tensor& augend, Tensor& addend) {
-  edges.push_back(autograd::Edge(0, augend.get_gradient_edge()));
-  edges.push_back(autograd::Edge(1, addend.get_gradient_edge()));
+  if (augend.requires_grad) {
+    edges.push_back(autograd::Edge(0, augend.get_gradient_edge()));
+  }
+  if (addend.requires_grad) {
+    edges.push_back(autograd::Edge(1, addend.get_gradient_edge()));
+  }
 }
 
 /**
