@@ -1,6 +1,6 @@
 ![image](https://github.com/user-attachments/assets/28018382-3bc6-4260-ae65-1714bf689360)
 
-# Ember🔥: Reverse-mode autodiff with no frills 
+# Ember🔥: Reverse-mode autodiff made easy
 
 Ember is a small C++ library implementing reverse-mode automatic differentiation. 
 
