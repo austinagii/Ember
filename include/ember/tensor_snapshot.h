@@ -1,5 +1,5 @@
-#ifndef TENSOR_SNAPSHOT_H
-#define TENSOR_SNAPSHOT_H
+#ifndef EMBER_TENSOR_SNAPSHOT_H
+#define EMBER_TENSOR_SNAPSHOT_H
 
 #include <xtensor/xarray.hpp>
 
@@ -9,8 +9,8 @@ struct Tensor;  // Forward declaration
 
 struct TensorSnapshot {
   xt::xarray<double> data_;
-  TensorSnapshot(Tensor *tensor);
+  TensorSnapshot(Tensor* tensor);
 };
 }  // namespace ember
 
-#endif  // TENSOR_SNAPSHOT_H
+#endif  // EMBER_TENSOR_SNAPSHOT_H

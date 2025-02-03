@@ -1,5 +1,5 @@
-#ifndef MUL_H
-#define MUL_H
+#ifndef EMBER_OPS_MUL_H
+#define EMBER_OPS_MUL_H
 
 #include <vector>
 
@@ -13,13 +13,13 @@ struct MulBackward;
 /**
  * Multiply two tensors and return a new tensor representing the product.
  */
-Tensor operator*(Tensor &multiplicand, Tensor &multiplier);
-Tensor operator*(Tensor &&multiplicand, Tensor &multiplier);
-Tensor operator*(Tensor &multiplicand, Tensor &&multiplier);
-Tensor operator*(Tensor &&multiplicand, Tensor &&multiplier);
+Tensor operator*(Tensor& multiplicand, Tensor& multiplier);
+Tensor operator*(Tensor&& multiplicand, Tensor& multiplier);
+Tensor operator*(Tensor& multiplicand, Tensor&& multiplier);
+Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier);
 
 struct MulBackward : public autograd::Node {
-  MulBackward(Tensor &multiplicand, Tensor &multiplier);
+  MulBackward(Tensor& multiplicand, Tensor& multiplier);
   std::vector<Tensor> operator()(Tensor output_grad) override;
 };  // struct MulBackward
 
