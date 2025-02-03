@@ -9,8 +9,7 @@
 
 namespace ember {
 
-Tensor::Tensor()
-    : gradient(nullptr), gradient_fn(nullptr), gradient_accumulator(nullptr) {}
+Tensor::Tensor() {}
 
 Tensor::Tensor(double value, bool requires_grad)
     : data_({value}), requires_grad(requires_grad) {}
@@ -25,7 +24,7 @@ Tensor::Tensor(init_list<init_list<init_list<double>>> values,
                bool requires_grad)
     : data_(values), requires_grad(requires_grad) {}
 
-Tensor::Tensor(const Tensor &other)
+Tensor::Tensor(const Tensor& other)
     : data_(other.data_), gradient_fn(other.gradient_fn),
       gradient_accumulator(other.gradient_accumulator),
       requires_grad(other.requires_grad) {
@@ -34,44 +33,14 @@ Tensor::Tensor(const Tensor &other)
   }
 }
 
-// TODO: Refactor this code so that performing a top sort of the graph happens
-// within the engine.
-void Tensor::backward() {
-  // Create engine instance for this backward pass
+void Tensor::backward(const Tensor& gradient) {
   autograd::Engine engine;
-  Tensor gradient;
-  gradient.data_ = xt::ones_like(this->data_);
-  engine.grad_buffer[gradient_fn] = gradient;
-
-  // Perform topological sort
-  std::vector<autograd::Node *> topo_order;
-  std::unordered_set<autograd::Node *> visited;
-
-  // Helper function for DFS
-  std::function<void(autograd::Node *)> topo_sort_dfs =
-      [&](autograd::Node *node) {
-        if (!node || visited.count(node))
-          return;
-
-        visited.insert(node);
-        for (const auto &edge : node->edges) {
-          if (edge.fn) {
-            topo_sort_dfs(edge.fn);
-          }
-        }
-        topo_order.push_back(node);
-      };
-
-  // Start DFS from the gradient function
-  topo_sort_dfs(gradient_fn);
-
-  // Evaluate nodes in reverse topological order
-  for (auto it = topo_order.rbegin(); it != topo_order.rend(); ++it) {
-    engine.evaluate_fn(*it);
-  }
+  engine.backward(this->gradient_fn, gradient);
 }
 
-autograd::Node *Tensor::get_gradient_edge() {
+void Tensor::backward() { backward(Tensor::ones_like(*this)); }
+
+autograd::Node* Tensor::get_gradient_edge() {
   if (gradient_fn != nullptr) {
     return gradient_fn;
   }
@@ -84,15 +53,15 @@ autograd::Node *Tensor::get_gradient_edge() {
 
 TensorSnapshot Tensor::save() { return TensorSnapshot(this); }
 
-bool operator==(const Tensor &left, const Tensor &right) {
+bool operator==(const Tensor& left, const Tensor& right) {
   return xt::all(xt::equal(left.data_, right.data_));
 }
 
-bool Tensor::equals_approx(const Tensor &other) {
+bool Tensor::equals_approx(const Tensor& other) {
   return xt::allclose(this->data_, other.data_);
 }
 
-Tensor Tensor::ones_like(const Tensor &other) {
+Tensor Tensor::ones_like(const Tensor& other) {
   return Tensor::from_xarray_(xt::ones_like(other.data_));
 }
 

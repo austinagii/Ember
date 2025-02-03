@@ -6,9 +6,15 @@
 #include <unordered_map>
 
 namespace ember::autograd {
-struct Engine {
-  std::unordered_map<Node *, Tensor> grad_buffer;
-  void evaluate_fn(Node *func);
+class Engine {
+public:
+  Engine() = default;
+  ~Engine() = default;
+  void backward(Node* root, Tensor gradient);
+
+private:
+  std::unordered_map<Node*, Tensor> grad_buffer;
+  void evaluate_fn(Node* func, Tensor gradient);
 };
 }  // namespace ember::autograd
 

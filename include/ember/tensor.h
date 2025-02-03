@@ -44,12 +44,12 @@ struct Tensor {
   xt::xarray<double> data_;
   // The gradient of this node w.r.t. the ancestor on which backward was
   // called.
-  Tensor *gradient = nullptr;
+  Tensor* gradient = nullptr;
   // The function that will be used to pass the gradient from this tensor to
   // it's parents.
-  autograd::Node *gradient_fn = nullptr;
+  autograd::Node* gradient_fn = nullptr;
   // Accumulates a sum of gradients for this tensor if it is a leaf tensor.
-  autograd::Node *gradient_accumulator = nullptr;
+  autograd::Node* gradient_accumulator = nullptr;
   // Whether this tensor requires gradients to be computed and stored.
   bool requires_grad = false;
 
@@ -107,7 +107,7 @@ struct Tensor {
    * @brief Copy constructor that creates a deep copy of another tensor
    * @param other The tensor to copy from
    */
-  Tensor(const Tensor &other);
+  Tensor(const Tensor& other);
 
   static Tensor from_xarray_(xt::xarray<double> data) {
     auto t = Tensor();
@@ -115,7 +115,7 @@ struct Tensor {
     return t;
   }
 
-  static Tensor zeros_like(const Tensor &other) {
+  static Tensor zeros_like(const Tensor& other) {
     return Tensor::from_xarray_(xt::zeros_like(other.data_));
   }
 
@@ -123,7 +123,7 @@ struct Tensor {
    * @brief Creates a new tensor with the same shape as the input tensor, but
    * with all elements set to 1.
    */
-  static Tensor ones_like(const Tensor &other);
+  static Tensor ones_like(const Tensor& other);
 
   /**
    * @brief Compares two tensors to determine if they are exactly equal.
@@ -131,7 +131,7 @@ struct Tensor {
    * Exact equality means that the tensors both have the same shape and there
    * is element-wise equality.
    */
-  friend bool operator==(const Tensor &left, const Tensor &right);
+  friend bool operator==(const Tensor& left, const Tensor& right);
 
   /**
    * @brief Compares two tensors to determine if they are approximately equal.
@@ -139,18 +139,25 @@ struct Tensor {
    * Approximate equality means that the tensors both have the same shape and
    * there is element-wise equality within a given range.
    */
-  bool equals_approx(const Tensor &other);
+  bool equals_approx(const Tensor& other);
 
   /**
-   * @brief Computes the gradient of this tensor w.r.t. the ancestor on which
-   * backward was called.
+   * @brief Computes gradients for all input tensors that created this tensor,
+   * using the provided gradient as the starting point for backpropagation.
+   * @param gradient The initial gradient to begin backpropagation with
+   */
+  void backward(const Tensor& gradient);
+
+  /**
+   * @brief Computes gradients for all input tensors that created this tensor,
+   * starting with a gradient of ones.
    */
   void backward();
 
   /**
    * @brief Returns the gradient edge for this tensor.
    */
-  autograd::Node *get_gradient_edge();
+  autograd::Node* get_gradient_edge();
 
   /**
    * @brief Saves the current state of this tensor.
@@ -167,7 +174,7 @@ struct Tensor {
   /**
    * @brief Access a tensor element (mutable version)
    */
-  template <typename... Args> double &operator()(Args... args) {
+  template <typename... Args> double& operator()(Args... args) {
     return data_(args...);
   }
 
