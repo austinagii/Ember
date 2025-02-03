@@ -4,16 +4,12 @@
 
 Ember is a small C++ library implementing reverse-mode automatic differentiation. 
 
-Inspired by [PyTorch](https://github.com/pytorch/pytorch) (with concepts from [micrograd](https://github.com/karpathy/micrograd) and [tinygrad](https://github.com/tinygrad/tinygrad)) it provides a streamlined implementation without the complex optimizations found in production frameworks. 
-
-By offering a design and API similar to PyTorch, Ember hopes to serve as a stepping stone to anyone wishing to understand the inner workings of more modern neural network frameworks.
+Inspired by [micrograd](https://github.com/karpathy/micrograd), Ember offers a streamlined implementation of reverse mode autodiff without the complex optimizations found in production grade frameworks. With an API that's (mostly) similar to PyTorch's `Autograd` module, Ember aims to serve as both a reference implementation to help you grasp the core ideas of autodiff and a stepping stone for understanding the inner workings of modern neural network frameworks.
 
 
 ## Why Ember?
 
-As one of the core concepts used in training modern neural networks, understanding automatic differentation can help to facilitate a better intuition of neural networks. 
-
-However, trying to understand this concept by reading the source code of a production-grade framework like PyTorch can be pretty challenging, with all it's necessary optimizations. 
+As one of the core concepts used in training modern neural networks, understanding automatic differentation can help to facilitate a better intuition of neural networks. However, trying to understand this concept by reading the source code of a production-grade framework like PyTorch can be pretty challenging, with all it's necessary optimizations. 
 If you're like me, you like to peek under the hood to get a good idea of how things work but wished you could just see the implementation of the core concepts without getting lost in the details.  
 
 Ember aims to accomplish this by providing a clear, concise and documentation first approach to implementating key concepts like computational graphs and reverse-mode automatic differentiation, while keeping mostly the same interface as PyTorch.
