@@ -52,16 +52,10 @@ std::vector<Tensor> DivBackward::operator()(Tensor output_grad) {
   auto dividend = saved_tensors[DIVIDEND_INDEX];
   auto divisor = saved_tensors[DIVISOR_INDEX];
 
-  // For division z = x/y:
-  // ∂z/∂x = 1/y
-  // ∂z/∂y = -x/y²
-
-  // Calculate raw gradients with broadcasting
   auto dividend_grad_raw = xt::eval(output_grad.data_ / divisor.data_);
   auto divisor_grad_raw = xt::eval(
       output_grad.data_ * (-dividend.data_ / (divisor.data_ * divisor.data_)));
 
-  // Reduce gradients along broadcast dimensions
   auto dividend_grad =
       reduce_broadcast(dividend_grad_raw, dividend.data_.shape());
   auto divisor_grad = reduce_broadcast(divisor_grad_raw, divisor.data_.shape());

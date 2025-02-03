@@ -50,9 +50,6 @@ std::vector<Tensor> MulBackward::operator()(Tensor output_grad) {
   auto multiplicand = saved_tensors[MULTIPLICAND_INDEX];
   auto multiplier = saved_tensors[MULTIPLIER_INDEX];
 
-  // For multiplication, partial derivatives are:
-  // ∂(a*b)/∂a = b * output_grad
-  // ∂(a*b)/∂b = a * output_grad
   xt::xarray<double> multiplier_grad_raw =
       multiplicand.data_ * output_grad.data_;
   xt::xarray<double> multiplicand_grad_raw =
