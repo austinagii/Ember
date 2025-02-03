@@ -27,19 +27,19 @@ TEST(TensorConstructors, TwoDimensionalInitializerList) {
   EXPECT_EQ(t.data_.dimension(), 2);
   EXPECT_EQ(t.data_.shape()[0], 3);
   EXPECT_EQ(t.data_.shape()[1], 2);
-  EXPECT_TRUE(xt::allclose(t.data_, xt::xarray<double>{{1.0, 2.0}, {3.0, 4.0}, {5.0, 6.0}}));
+  EXPECT_TRUE(xt::allclose(
+      t.data_, xt::xarray<double>{{1.0, 2.0}, {3.0, 4.0}, {5.0, 6.0}}));
 }
 
 TEST(TensorConstructors, ThreeDimensionalInitializerList) {
-  Tensor t = {{{1.0, 2.0}, {3.0, 4.0}},
-              {{5.0, 6.0}, {7.0, 8.0}}};
+  Tensor t = {{{1.0, 2.0}, {3.0, 4.0}}, {{5.0, 6.0}, {7.0, 8.0}}};
   EXPECT_EQ(t.data_.dimension(), 3);
   EXPECT_EQ(t.data_.shape()[0], 2);
   EXPECT_EQ(t.data_.shape()[1], 2);
   EXPECT_EQ(t.data_.shape()[2], 2);
-  
+
   xt::xarray<double> expected = {{{1.0, 2.0}, {3.0, 4.0}},
-                               {{5.0, 6.0}, {7.0, 8.0}}};
+                                 {{5.0, 6.0}, {7.0, 8.0}}};
   EXPECT_TRUE(xt::allclose(t.data_, expected));
 }
 
@@ -53,10 +53,9 @@ TEST(TensorStaticInitializers, FromXArrayCreatesCorrectTensor) {
 }
 
 TEST(TensorStaticInitializers, ZerosLikeCreatesMatchingShape) {
-  Tensor original = {{1.0, 2.0, 3.0},
-                    {4.0, 5.0, 6.0}};
+  Tensor original = {{1.0, 2.0, 3.0}, {4.0, 5.0, 6.0}};
   Tensor zeros = Tensor::zeros_like(original);
-  
+
   EXPECT_EQ(zeros.data_.shape(), original.data_.shape());
   EXPECT_TRUE(xt::allclose(zeros.data_, xt::zeros_like(original.data_)));
   EXPECT_EQ(zeros.gradient, nullptr);

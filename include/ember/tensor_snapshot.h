@@ -4,12 +4,13 @@
 #include <xtensor/xarray.hpp>
 
 namespace ember {
-    struct Tensor;  // Forward declaration
 
-    struct TensorSnapshot {
-        xt::xarray<double> data_;
-        TensorSnapshot(Tensor* tensor);
-    };
-} // namespace ember
+struct Tensor;  // Forward declaration
 
-#endif // TENSOR_SNAPSHOT_H 
+struct TensorSnapshot {
+  xt::xarray<double> data_;
+  TensorSnapshot(Tensor *tensor);
+};
+}  // namespace ember
+
+#endif  // TENSOR_SNAPSHOT_H

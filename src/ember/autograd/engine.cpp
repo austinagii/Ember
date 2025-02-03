@@ -7,16 +7,17 @@
 
 namespace ember::autograd {
 
-void Engine::evaluate_fn(Node* func) {
+void Engine::evaluate_fn(Node *func) {
   std::vector<Tensor> input_grads = (*func)(grad_buffer[func]);
 
   if (input_grads.size() < func->get_num_inputs()) {
-    throw std::runtime_error("Not enough gradients computed given the number of inputs");
+    throw std::runtime_error(
+        "Not enough gradients computed given the number of inputs");
   }
 
   // Store or accumulate gradients in buffer for next nodes
   for (std::size_t i = 0; i < func->edges.size(); i++) {
-    Edge& edge = func->edges[i];
+    Edge &edge = func->edges[i];
 
     auto it = grad_buffer.find(edge.fn);
     if (it == grad_buffer.end()) {
@@ -27,4 +28,4 @@ void Engine::evaluate_fn(Node* func) {
   }
 }
 
-} // namespace ember::autograd
+}  // namespace ember::autograd
