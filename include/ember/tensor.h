@@ -25,19 +25,15 @@ template <typename T> using init_list = std::initializer_list<T>;
 namespace ember {
 
 /**
- * Tensor is the central resource of the system. It represents the core
- * resources that are manipulated and stored and act as inputs and outputs to
- * the system. Computational graphs are built by performing operations on
- * Tensors.
+ * Tensor is the central resource of the Ember. It represents the core
+ * resource that is created, manipulated and stored acting as inputs to and outputs 
+ * of various operations.
  *
- * Tensors are thin wrappers around a mathematical tensor (i.e. multidemnsional
- * array) that provide additional capabilities for calculating gradients and
- * storing gradient information as well as hooking into the computational graph
- * in which it participates.
+ * Ember Tensors are thin wrappers around xtensor (multidimensional) arrays 
+ * providing additional scaffolding for calculating and storing gradients as well as 
+ * hooking into the computational graph.
  *
- * This class corresponds to the `Variable` class in PyTorch's autograd, the
- * difference in naming here stems from the fact that this naming in PyTorch in
- * intended to be deprecated in favor of the current naming.
+ * This class corresponds to the `Variable` class in PyTorch's autograd. 
  */
 struct Tensor {
   // The multidemnsional array of data this tensor contains.
