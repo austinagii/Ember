@@ -4,16 +4,16 @@
 
 Ember is a small C++ library implementing reverse-mode automatic differentiation. 
 
-Inspired by [micrograd](https://github.com/karpathy/micrograd), Ember offers a streamlined implementation of reverse mode autodiff without the complex optimizations found in production-grade frameworks. With an API that's (mostly) similar to PyTorch's `Autograd` module, Ember aims to serve as both a reference implementation to help you grasp the core ideas of autodiff and a stepping stone for understanding the inner workings of modern neural network frameworks.
+Inspired by [micrograd](https://github.com/karpathy/micrograd), Ember offers a streamlined implementation of reverse mode automatic differentation (autodiff) without the complex optimizations found in production-grade frameworks. With an API that's _mostly_ similar to PyTorch's `Autograd` module, Ember aims to serve as both a reference implementation to help you grasp the core ideas of autodiff and a stepping stone for understanding the inner workings of modern neural network frameworks.
 
 
 ## Why Ember?
 
-As one of the core techniques used in training modern neural networks, understanding automatic differentiation is crucial. However, trying to understand this concept by reading the source code of a production-grade framework like PyTorch can be pretty challenging, with all its necessary optimizations. 
+As one of the core techniques used in training modern neural networks, understanding autodiff is crucial. However, trying to understand this concept by reading the source code of a production-grade framework like PyTorch can be pretty challenging, with all its necessary optimizations. 
 
-Ember aims to make this easier by providing a clear, concise, and documentation-first approach to implementing key concepts like computational graphs and reverse-mode automatic differentiation, while keeping mostly the same interface as PyTorch.
+Ember aims to make this easier by providing a clear, concise, and well documented implementation of key concepts like computational graphs and backward functions, while keeping mostly the same interface as PyTorch.
 
-Ember is designed to help you:
+Ultimately, Ember is designed to help you:
  - Build and (slowly) train neural networks.
  - Deepen your understanding of gradients, computational graphs, and backpropagation.
  - Seamlessly transition to understanding the inner workings of PyTorch (and other frameworks).
