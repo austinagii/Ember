@@ -65,9 +65,9 @@ using namespace ember;
 
 int main() {
     // Create tensors of different dimensions
-    Tensor a = {{1.0, 2.0}, {3.0, 4.0}};
-    Tensor b = {{2.0, 1.0}, {0.5, 2.0}};
-    Tensor c = {3.0};
+    Tensor a({{1.0, 2.0}, {3.0, 4.0}}, true);
+    Tensor b({{2.0, 1.0}, {0.5, 2.0}}, true);
+    Tensor c({3.0}, true);
 
     // Perform element-wise operations with broadcasting
     auto d = (a * b) + c;  
