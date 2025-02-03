@@ -42,10 +42,10 @@ Tensor operator+(Tensor&& augend, Tensor&& addend) {
 
 AddBackward::AddBackward(Tensor& augend, Tensor& addend) {
   if (augend.requires_grad) {
-    edges.push_back(autograd::Edge(0, augend.get_gradient_edge()));
+    edges.push_back(autograd::Edge(AUGEND_INDEX, augend.get_gradient_edge()));
   }
   if (addend.requires_grad) {
-    edges.push_back(autograd::Edge(1, addend.get_gradient_edge()));
+    edges.push_back(autograd::Edge(ADDEND_INDEX, addend.get_gradient_edge()));
   }
 }
 

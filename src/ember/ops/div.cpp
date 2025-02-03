@@ -41,10 +41,11 @@ Tensor operator/(Tensor&& dividend, Tensor&& divisor) {
 
 DivBackward::DivBackward(Tensor& dividend, Tensor& divisor) {
   if (dividend.requires_grad) {
-    edges.push_back(autograd::Edge(0, dividend.get_gradient_edge()));
+    edges.push_back(
+        autograd::Edge(DIVIDEND_INDEX, dividend.get_gradient_edge()));
   }
   if (divisor.requires_grad) {
-    edges.push_back(autograd::Edge(1, divisor.get_gradient_edge()));
+    edges.push_back(autograd::Edge(DIVISOR_INDEX, divisor.get_gradient_edge()));
   }
 }
 
