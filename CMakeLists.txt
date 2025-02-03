@@ -36,6 +36,7 @@ set(EMBER_SOURCES
   src/ember/ops/sub.cpp
   src/ember/ops/mul.cpp
   src/ember/ops/div.cpp
+  src/ember/ops/utils.cpp
 )
 
 # Test files

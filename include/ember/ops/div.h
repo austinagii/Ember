@@ -11,16 +11,33 @@ namespace ember {
 struct DivBackward;
 
 /**
- * Divides one tensor by another and returns a new tensor representing the
- * quotient.
+ * @brief Divide two tensors and return a new tensor representing the quotient.
  */
-Tensor operator/(Tensor &dividend, Tensor &divisor);
-Tensor operator/(Tensor &&dividend, Tensor &divisor);
-Tensor operator/(Tensor &dividend, Tensor &&divisor);
-Tensor operator/(Tensor &&dividend, Tensor &&divisor);
+Tensor operator/(Tensor& dividend, Tensor& divisor);
+Tensor operator/(Tensor&& dividend, Tensor& divisor);
+Tensor operator/(Tensor& dividend, Tensor&& divisor);
+Tensor operator/(Tensor&& dividend, Tensor&& divisor);
 
+/**
+ * @brief The node representing the backward pass for the division operation.
+ */
 struct DivBackward : public autograd::Node {
-  DivBackward(Tensor &dividend, Tensor &divisor);
+  DivBackward(Tensor& dividend, Tensor& divisor);
+
+  /**
+   * @brief Compute the gradients of both inputs of a division operation (a/b)
+   *
+   * Given that c = a / b and the partial derivate of c w.r.t some output o
+   * (∂c/∂o) is `output_grad`, then the partial derivatives of a and b are as
+   * follows:
+   *
+   * - ∂a/∂o = `output_grad` / b
+   * - ∂b/∂o = -`output_grad` * a / (b * b)
+   *
+   * @param output_grad The gradient of the output of the division operation.
+   * @return A vector containing the gradients of the inputs of the division
+   * operation.
+   */
   std::vector<Tensor> operator()(Tensor output_grad) override;
 };  // struct DivBackward
 

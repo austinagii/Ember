@@ -1,11 +1,12 @@
 #include <ember/ops/sub.h>
+#include <ember/ops/utils.h>
 
 namespace ember {
 
 std::size_t MINUEND_INDEX = 0;
 std::size_t SUBTRAHEND_INDEX = 1;
 
-static Tensor subtract_tensors(Tensor &minuend, Tensor &subtrahend) {
+static Tensor subtract_tensors(Tensor& minuend, Tensor& subtrahend) {
   Tensor difference =
       Tensor::from_xarray_(xt::eval(minuend.data_ - subtrahend.data_));
   if (minuend.requires_grad || subtrahend.requires_grad) {
@@ -18,23 +19,23 @@ static Tensor subtract_tensors(Tensor &minuend, Tensor &subtrahend) {
   return difference;
 }
 
-Tensor operator-(Tensor &minuend, Tensor &subtrahend) {
+Tensor operator-(Tensor& minuend, Tensor& subtrahend) {
   return subtract_tensors(minuend, subtrahend);
 }
 
-Tensor operator-(Tensor &&minuend, Tensor &subtrahend) {
+Tensor operator-(Tensor&& minuend, Tensor& subtrahend) {
   return subtract_tensors(minuend, subtrahend);
 }
 
-Tensor operator-(Tensor &minuend, Tensor &&subtrahend) {
+Tensor operator-(Tensor& minuend, Tensor&& subtrahend) {
   return subtract_tensors(minuend, subtrahend);
 }
 
-Tensor operator-(Tensor &&minuend, Tensor &&subtrahend) {
+Tensor operator-(Tensor&& minuend, Tensor&& subtrahend) {
   return subtract_tensors(minuend, subtrahend);
 }
 
-SubBackward::SubBackward(Tensor &minuend, Tensor &subtrahend) {
+SubBackward::SubBackward(Tensor& minuend, Tensor& subtrahend) {
   if (minuend.requires_grad) {
     edges.push_back(autograd::Edge(MINUEND_INDEX, minuend.get_gradient_edge()));
   }
@@ -72,11 +73,16 @@ std::vector<Tensor> SubBackward::operator()(Tensor output_grad) {
   auto minuend = saved_tensors[MINUEND_INDEX];
   auto subtrahend = saved_tensors[SUBTRAHEND_INDEX];
 
-  auto minuend_grad = Tensor::from_xarray_(
-      calculate_local_sub_gradient(minuend.data_, output_grad.data_));
-  auto subtrahend_grad = Tensor::from_xarray_(
-      -1 * calculate_local_sub_gradient(subtrahend.data_, output_grad.data_));
-  return {minuend_grad, subtrahend_grad};
+  xt::xarray<double> minuend_grad_broadcasted = output_grad.data_;
+  xt::xarray<double> subtrahend_grad_broadcasted = -1 * output_grad.data_;
+
+  xt::xarray<double> minuend_grad =
+      reduce_broadcast(minuend_grad_broadcasted, minuend.data_.shape());
+  xt::xarray<double> subtrahend_grad =
+      reduce_broadcast(subtrahend_grad_broadcasted, subtrahend.data_.shape());
+
+  return {Tensor::from_xarray_(minuend_grad),
+          Tensor::from_xarray_(subtrahend_grad)};
 }
 
 }  // namespace ember

@@ -2,8 +2,7 @@
 
 #include <gtest/gtest.h>
 #include <xtensor/xarray.hpp>
-#include <xtensor/xfixed.hpp>
-#include <xtensor/xio.hpp>  // for operator<<, if you want
+#include <xtensor/xio.hpp>
 
 #include <iostream>
 
@@ -49,8 +48,10 @@ TEST(TensorAddition, AnonymousIntermediateTensorsCanBeAdded) {
 
   d.backward();
 
-  EXPECT_EQ(*a.gradient, Tensor({{2.0, 2.0}, {2.0, 2.0}}));
-  EXPECT_EQ(*b.gradient, Tensor({{2.0, 2.0}, {2.0, 2.0}}));
+  EXPECT_TRUE(a.gradient->equals_approx(Tensor({{2.0, 2.0}, {2.0, 2.0}})))
+      << a.gradient->data_;
+  EXPECT_TRUE(b.gradient->equals_approx(Tensor({{2.0, 2.0}, {2.0, 2.0}})))
+      << b.gradient->data_;
 }
 
 TEST(TensorAddition, BroadcastingWorks) {
