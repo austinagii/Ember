@@ -1,4 +1,4 @@
-![image](https://github.com/user-attachments/assets/28018382-3bc6-4260-ae65-1714bf689360)
+![ember-logo](https://github.com/user-attachments/assets/bc80ea7a-e41c-4281-87b5-b9ba77ae317b)
 
 # Ember🔥: Reverse-mode autodiff made easy
 
