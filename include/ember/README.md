@@ -55,9 +55,9 @@ getting started reading the Ember source:
    to the `autograd` directory.
 
 3. **autograd/** (`include/ember/autograd/`)  
-   Contains the automatic differentiation implementation. With an understanding
-   of `Tensor` and a the add operation you should have enough context to be able
-   to read the code here.
+   `autograd` contains the implementation of automatic differentiation. With an
+   understanding of `Tensor` and the add operation under your belt, you should
+   have enough context to be able to read the code here.
 
 Each subdirectory contains a README file that provides an overview of the files 
 contained within the directory and how they fit into the overall structure of 
