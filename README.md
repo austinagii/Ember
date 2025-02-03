@@ -51,7 +51,7 @@ Ultimately, Ember is designed to help you:
 
 ## Usage
 
-Below is an example of how you can use Ember to create a function and calculate the partial derivatives of that function.
+Below is an example of how you can use Ember to create one or more tensors, perform operations on those tensors and compute the gradient of those tensors with respect to the output tensor(s) that were produced by those operations.
 
 ```cpp
 #include <ember/tensor.h>
