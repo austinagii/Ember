@@ -46,20 +46,58 @@ set(EMBER_TESTS
   tests/ember/ops/test_add.cpp
   tests/ember/ops/test_mul.cpp
   tests/ember/ops/test_div.cpp
+  
   tests/ember/test_readme.cpp
 )
 
-# Test executable
-add_executable(ember_test 
-    ${EMBER_TESTS} 
-    ${EMBER_SOURCES}
+# Create static library
+add_library(ember STATIC ${EMBER_SOURCES})
+target_include_directories(ember 
+    PUBLIC 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-target_include_directories(ember_test PRIVATE include)
+target_link_libraries(ember PUBLIC xtl xtensor)
+
+# Create test executable
+add_executable(ember_test ${EMBER_TESTS})
 target_link_libraries(ember_test PRIVATE 
+    ember
     gtest_main 
     gmock_main
-    xtl
-    xtensor
 )
 
 add_test(NAME ember_test COMMAND ember_test)
+
+# Installation configuration
+include(GNUInstallDirs)
+set(INSTALL_CONFIGDIR ${CMAKE_INSTALL_LIBDIR}/cmake/ember)
+
+# Install library and headers
+install(TARGETS ember
+    EXPORT ember-targets
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+# Export targets
+install(EXPORT ember-targets
+    FILE ember-targets.cmake
+    NAMESPACE ember::
+    DESTINATION ${INSTALL_CONFIGDIR}
+)
+
+# Create and install config file
+include(CMakePackageConfigHelpers)
+configure_package_config_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/ember-config.cmake.in
+    ${CMAKE_CURRENT_BINARY_DIR}/ember-config.cmake
+    INSTALL_DESTINATION ${INSTALL_CONFIGDIR}
+)
+install(FILES
+    ${CMAKE_CURRENT_BINARY_DIR}/ember-config.cmake
+    DESTINATION ${INSTALL_CONFIGDIR}
+)
