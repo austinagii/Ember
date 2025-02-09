@@ -76,3 +76,50 @@ TEST(TensorConstructors, InitializerListsPreserveGradientProperties) {
   EXPECT_EQ(t.gradient_fn, nullptr);
   EXPECT_EQ(t.gradient_accumulator, nullptr);
 }
+
+TEST(TensorCreation, SuccessfullyCreatesTensorWithRandomValues) {
+  Tensor t = Tensor::randn({5, 10});
+  EXPECT_EQ(t.data_.dimension(), 2);
+  EXPECT_EQ(t.data_.shape()[0], 5);
+  EXPECT_EQ(t.data_.shape()[1], 10);
+
+  // Check that the values are random
+  EXPECT_NE(t.data_(0, 0), t.data_(0, 1));
+  // Check that all values are non-zero using elementwise comparison
+  EXPECT_TRUE(xt::all(xt::not_equal(t.data_, 0.0)));
+}
+
+TEST(TensorCreation, RandnProducesExpectedDistribution) {
+  Tensor t = Tensor::randn({1000}, 5.0, 2.0);
+
+  // Calculate mean and check it's close to expected
+  double mean = xt::mean(t.data_)();
+  EXPECT_NEAR(mean, 5.0, 0.2);  // Allow some deviation due to randomness
+
+  // Calculate std and check it's close to expected
+  double variance = xt::mean(xt::pow(t.data_ - mean, 2))();
+  double std_dev = std::sqrt(variance);
+  EXPECT_NEAR(std_dev, 2.0, 0.2);
+}
+
+TEST(TensorCreation, RandnHandlesEmptyShape) {
+  Tensor t = Tensor::randn({});
+  EXPECT_EQ(t.data_.dimension(), 0);
+  EXPECT_EQ(t.data_.size(), 1);
+}
+
+TEST(TensorCreation, RandnPreservesGradientProperties) {
+  Tensor t = Tensor::randn({2, 2}, 0.0, 1.0);
+  EXPECT_EQ(t.gradient, nullptr);
+  EXPECT_EQ(t.gradient_fn, nullptr);
+  EXPECT_EQ(t.gradient_accumulator, nullptr);
+  EXPECT_FALSE(t.requires_grad);
+}
+
+TEST(TensorCreation, RandnShapeIsCorrect) {
+  Tensor t = Tensor::randn({3, 4, 5});
+  EXPECT_EQ(t.data_.dimension(), 3);
+  EXPECT_EQ(t.data_.shape()[0], 3);
+  EXPECT_EQ(t.data_.shape()[1], 4);
+  EXPECT_EQ(t.data_.shape()[2], 5);
+}
