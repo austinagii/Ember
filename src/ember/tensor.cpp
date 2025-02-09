@@ -1,6 +1,8 @@
 #include <ember/autograd/node.h>  // Can this be removed?
 #include <ember/tensor.h>
 
+#include <xtensor/xrandom.hpp>
+
 #include <functional>
 #include <iostream>
 #include <unordered_set>
@@ -67,6 +69,11 @@ Tensor Tensor::ones_like(const Tensor& other) {
 
 Tensor Tensor::from_shape(std::initializer_list<size_t> shape) {
   return Tensor::from_xarray_(xt::xarray<double>::from_shape(shape));
+}
+
+Tensor Tensor::randn(std::initializer_list<size_t> shape, double mean,
+                     double std) {
+  return Tensor::from_xarray_(xt::random::randn<double>(shape, mean, std));
 }
 
 }  // namespace ember

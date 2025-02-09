@@ -26,14 +26,14 @@ namespace ember {
 
 /**
  * Tensor is the central resource of the Ember. It represents the core
- * resource that is created, manipulated and stored acting as inputs to and outputs 
- * of various operations.
+ * resource that is created, manipulated and stored acting as inputs to and
+ * outputs of various operations.
  *
- * Ember Tensors are thin wrappers around xtensor (multidimensional) arrays 
- * providing additional scaffolding for calculating and storing gradients as well as 
- * hooking into the computational graph.
+ * Ember Tensors are thin wrappers around xtensor (multidimensional) arrays
+ * providing additional scaffolding for calculating and storing gradients as
+ * well as hooking into the computational graph.
  *
- * This class corresponds to the `Variable` class in PyTorch's autograd. 
+ * This class corresponds to the `Variable` class in PyTorch's autograd.
  */
 struct Tensor {
   // The multidemnsional array of data this tensor contains.
@@ -105,22 +105,6 @@ struct Tensor {
    */
   Tensor(const Tensor& other);
 
-  static Tensor from_xarray_(xt::xarray<double> data) {
-    auto t = Tensor();
-    t.data_ = data;
-    return t;
-  }
-
-  static Tensor zeros_like(const Tensor& other) {
-    return Tensor::from_xarray_(xt::zeros_like(other.data_));
-  }
-
-  /**
-   * @brief Creates a new tensor with the same shape as the input tensor, but
-   * with all elements set to 1.
-   */
-  static Tensor ones_like(const Tensor& other);
-
   /**
    * @brief Compares two tensors to determine if they are exactly equal.
    *
@@ -174,13 +158,46 @@ struct Tensor {
     return data_(args...);
   }
 
+  static Tensor from_xarray_(xt::xarray<double> data) {
+    auto t = Tensor();
+    t.data_ = data;
+    return t;
+  }
+
   /**
    * @brief Creates a new tensor with the specified shape, initialized to
    * zeros.
    */
   static Tensor from_shape(std::initializer_list<size_t> shape);
 
-  // Add the friend declaration inside the class
+  static Tensor zeros_like(const Tensor& other) {
+    return Tensor::from_xarray_(xt::zeros_like(other.data_));
+  }
+
+  /**
+   * @brief Creates a new tensor with the same shape as the input tensor, but
+   * with all elements set to 1.
+   */
+  static Tensor ones_like(const Tensor& other);
+
+  /**
+   * @brief Creates a new tensor of the specified shape with each element
+   * being a random number sampled from a normal distribution with the
+   * specified mean and standard deviation.
+   *
+   * @param shape The shape of the tensor to create
+   * @param mean The mean of the normal distribution
+   * @param std The standard deviation of the normal distribution
+   * @return A tensor of the specified shape with values sampled from a
+   * normal distribution
+   * @example
+   *   Tensor t = Tensor::randn({2, 2}, 0.0, 1.0); // Creates a 2x2 tensor
+   *   with values sampled from a normal distribution with mean 0.0 and
+   *   standard deviation 1.0
+   */
+  static Tensor randn(std::initializer_list<size_t> shape, double mean = 0.0,
+                      double std = 1.0);
+
   friend struct TensorSnapshot;
 };  // struct Tensor
 
