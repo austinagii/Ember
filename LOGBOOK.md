@@ -1,4 +1,7 @@
 # Project Logbook
+This logbook is an artifact of my work on this project. It is a record of my
+work and thoughts as I built this project. It is now archived and kept here for
+future reference.
 
 ## [Template] Month Day, Year
 - **Task**: [Briefly describe the main objective or focus]
