@@ -1,5 +1,9 @@
 cmake_minimum_required(VERSION 3.14)
-project(ember)
+project(ember VERSION 1.1.0)
+
+set(EMBER_VERSION_MAJOR 1)
+set(EMBER_VERSION_MINOR 1)
+set(EMBER_VERSION_PATCH 0)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -39,15 +43,38 @@ set(EMBER_SOURCES
   src/ember/ops/utils.cpp
 )
 
-# Test files
-set(EMBER_TESTS
-  tests/ember/test_tensor.cpp
-  tests/ember/ops/test_sub.cpp
-  tests/ember/ops/test_add.cpp
-  tests/ember/ops/test_mul.cpp
-  tests/ember/ops/test_div.cpp
-  
-  tests/ember/test_readme.cpp
+# Option for building tests (ON by default for standalone builds)
+option(EMBER_BUILD_TESTS "Build ember tests" ${PROJECT_IS_TOP_LEVEL})
+
+if(EMBER_BUILD_TESTS)
+    # Enable testing
+    enable_testing()
+    
+    # Test files
+    set(EMBER_TESTS
+        tests/ember/test_tensor.cpp
+        tests/ember/ops/test_sub.cpp
+        tests/ember/ops/test_add.cpp
+        tests/ember/ops/test_mul.cpp
+        tests/ember/ops/test_div.cpp
+        tests/ember/test_readme.cpp
+    )
+
+    # Create test executable
+    add_executable(ember_test ${EMBER_TESTS})
+    target_link_libraries(ember_test PRIVATE 
+        ember
+        gtest_main 
+        gmock_main
+    )
+
+    add_test(NAME ember_test COMMAND ember_test)
+endif()
+
+# Configure version header
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/ember/version.h.in
+    ${CMAKE_CURRENT_BINARY_DIR}/include/ember/version.h
 )
 
 # Create static library
@@ -55,21 +82,12 @@ add_library(ember STATIC ${EMBER_SOURCES})
 target_include_directories(ember 
     PUBLIC 
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 target_link_libraries(ember PUBLIC xtl xtensor)
-
-# Create test executable
-add_executable(ember_test ${EMBER_TESTS})
-target_link_libraries(ember_test PRIVATE 
-    ember
-    gtest_main 
-    gmock_main
-)
-
-add_test(NAME ember_test COMMAND ember_test)
 
 # Installation configuration
 include(GNUInstallDirs)
@@ -101,3 +119,7 @@ install(FILES
     ${CMAKE_CURRENT_BINARY_DIR}/ember-config.cmake
     DESTINATION ${INSTALL_CONFIGDIR}
 )
+
+# Update install command to include the generated version header
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/ember/version.h 
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/ember)
