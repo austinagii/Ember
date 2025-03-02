@@ -27,7 +27,13 @@ FetchContent_Declare(
   GIT_TAG       0.25.0
 )
 
-FetchContent_MakeAvailable(gtest xtl xtensor)
+FetchContent_Declare(
+  xtensor-blas
+  GIT_REPOSITORY https://github.com/xtensor-stack/xtensor-blas.git
+  GIT_TAG       0.21.0
+)
+
+FetchContent_MakeAvailable(gtest xtl xtensor xtensor-blas)
 
 # Source files
 set(EMBER_SOURCES
@@ -40,6 +46,7 @@ set(EMBER_SOURCES
   src/ember/ops/sub.cpp
   src/ember/ops/mul.cpp
   src/ember/ops/div.cpp
+  src/ember/ops/matmul.cpp
   src/ember/ops/utils.cpp
 )
 
@@ -57,6 +64,7 @@ if(EMBER_BUILD_TESTS)
         tests/ember/ops/test_add.cpp
         tests/ember/ops/test_mul.cpp
         tests/ember/ops/test_div.cpp
+        tests/ember/ops/test_matmul.cpp
         tests/ember/test_readme.cpp
     )
 
@@ -87,7 +95,7 @@ target_include_directories(ember
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
-target_link_libraries(ember PUBLIC xtl xtensor)
+target_link_libraries(ember PUBLIC xtl xtensor xtensor-blas)
 
 # Installation configuration
 include(GNUInstallDirs)

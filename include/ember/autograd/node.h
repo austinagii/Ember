@@ -38,6 +38,20 @@ namespace ember::autograd {
  * number of input connections represented by the `edges` vector.
  */
 struct Node {
+
+  template <typename... Tensors> Node(Tensors&... inputs) {
+    std::size_t input_ix = 0;
+
+    auto add_input = [this, &input_ix](auto& tensor) {
+      if (tensor.requires_grad) {
+        add_next_edge(autograd::Edge(input_ix, tensor.get_gradient_edge()));
+      }
+      saved_tensors.emplace_back(tensor.save());
+      input_ix += 1;
+    };
+    (add_input(inputs), ...);
+  }
+
   /**
    * @brief Vector of edges connecting this node to its input nodes in the
    * computational graph.
