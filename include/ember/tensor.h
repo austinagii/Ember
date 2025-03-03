@@ -8,6 +8,8 @@
 #include <ember/ops/div.h>
 #include <ember/ops/mul.h>
 #include <ember/ops/sub.h>
+#include <ember/ops/matmul.h>
+
 #include <ember/tensor_snapshot.h>
 
 #include <xtensor/xadapt.hpp>
@@ -106,6 +108,27 @@ struct Tensor {
   Tensor(const Tensor& other);
 
   /**
+   * @brief Computes gradients for all input tensors that created this tensor,
+   * using the provided gradient as the starting point for backpropagation.
+   * @param gradient The initial gradient to begin backpropagation with
+   */
+  void backward(const Tensor& gradient);
+
+  /**
+   * @brief Computes gradients for all input tensors that created this tensor,
+   * starting with a gradient of ones.
+   */
+  void backward();
+
+  /**
+   * @brief Performs the matrix multiplication between this tensor and the one 
+   * specified.
+   *
+   * This is equivalent to `ember::matmul(this, other)`.
+   */
+  Tensor matmul(Tensor& other);
+
+  /**
    * @brief Compares two tensors to determine if they are exactly equal.
    *
    * Exact equality means that the tensors both have the same shape and there
@@ -120,19 +143,6 @@ struct Tensor {
    * there is element-wise equality within a given range.
    */
   bool equals_approx(const Tensor& other);
-
-  /**
-   * @brief Computes gradients for all input tensors that created this tensor,
-   * using the provided gradient as the starting point for backpropagation.
-   * @param gradient The initial gradient to begin backpropagation with
-   */
-  void backward(const Tensor& gradient);
-
-  /**
-   * @brief Computes gradients for all input tensors that created this tensor,
-   * starting with a gradient of ones.
-   */
-  void backward();
 
   /**
    * @brief Returns the gradient edge for this tensor.

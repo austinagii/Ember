@@ -55,6 +55,10 @@ autograd::Node* Tensor::get_gradient_edge() {
 
 TensorSnapshot Tensor::save() { return TensorSnapshot(this); }
 
+Tensor Tensor::matmul(Tensor& other) {
+  return ember::matmul(*this, other);  
+}
+
 bool operator==(const Tensor& left, const Tensor& right) {
   return xt::all(xt::equal(left.data_, right.data_));
 }

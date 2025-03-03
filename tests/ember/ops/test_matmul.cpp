@@ -8,7 +8,7 @@ TEST(TensorDot, DotProductIsCorrectlyCalculated) {
   Tensor a({{2.0, 3.0}, {5.0, 3.0}}, true);
   Tensor b({{5.0, 8.0}, {9.0, 2.0}}, true);
 
-  Tensor c = ember::matmul(a, b);
+  Tensor c = a.matmul(b);
   EXPECT_EQ(c, Tensor({{37.0, 22.0}, {52.0, 46.0}}));
 
   c.backward();
