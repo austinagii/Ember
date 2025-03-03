@@ -28,10 +28,6 @@ std::vector<Tensor> MatmulBackward::operator()(Tensor output_grad) {
   input_grads.emplace_back(Tensor::from_xarray_(xt::linalg::dot(
       xt::transpose(saved_tensors[0].data_), output_grad.data_)));
 
-  for (auto& grad : input_grads) {
-    std::cout << "Grad: " << grad.data_ << std::endl;
-  }
-
   return input_grads;
 }
 
