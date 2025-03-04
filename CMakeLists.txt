@@ -47,6 +47,7 @@ set(EMBER_SOURCES
   src/ember/ops/mul.cpp
   src/ember/ops/div.cpp
   src/ember/ops/matmul.cpp
+  src/ember/ops/exp.cpp
   src/ember/ops/utils.cpp
 )
 
@@ -65,6 +66,7 @@ if(EMBER_BUILD_TESTS)
         tests/ember/ops/test_mul.cpp
         tests/ember/ops/test_div.cpp
         tests/ember/ops/test_matmul.cpp
+        tests/ember/ops/test_exp.cpp
         tests/ember/test_readme.cpp
     )
 
