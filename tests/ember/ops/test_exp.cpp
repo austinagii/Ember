@@ -7,7 +7,7 @@ using namespace ember;
 TEST(TensorExponentiation, ExponentIsCorrectlyComputed) {
   Tensor a({4.0, 3.0}, true);
 
-  Tensor actual_result = exp(a);
+  Tensor actual_result = a.exp();
 
   Tensor expected_result({54.59815, 20.08553});
 

@@ -9,6 +9,7 @@
 #include <ember/ops/mul.h>
 #include <ember/ops/sub.h>
 #include <ember/ops/matmul.h>
+#include <ember/ops/exp.h>
 
 #include <ember/tensor_snapshot.h>
 
@@ -127,6 +128,8 @@ struct Tensor {
    * This is equivalent to `ember::matmul(this, other)`.
    */
   Tensor matmul(Tensor& other);
+
+  Tensor exp();
 
   /**
    * @brief Compares two tensors to determine if they are exactly equal.

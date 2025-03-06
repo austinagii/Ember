@@ -1,6 +1,7 @@
 #ifndef EMBER_AUTOGRAD_NODE_H
 #define EMBER_AUTOGRAD_NODE_H
 
+#include <ember/autograd/context.h>
 #include <ember/autograd/edge.h>
 #include <ember/tensor_snapshot.h>
 
@@ -38,8 +39,10 @@ namespace ember::autograd {
  * number of input connections represented by the `edges` vector.
  */
 struct Node {
+  Node() = default;
 
-  template <typename... Tensors> Node(Tensors&... inputs) {
+  template <typename... Tensors>
+  Node(Context ctx, Tensors&... inputs) : ctx(ctx) {
     std::size_t input_ix = 0;
 
     auto add_input = [this, &input_ix](auto& tensor) {
@@ -51,6 +54,8 @@ struct Node {
     };
     (add_input(inputs), ...);
   }
+
+  Context ctx;
 
   /**
    * @brief Vector of edges connecting this node to its input nodes in the

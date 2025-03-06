@@ -13,14 +13,6 @@ namespace ember {
  */
 Tensor exp(Tensor& exponent);
 
-/**
- * Represents the backwards pass of the exponent function.
- */
-struct ExpBackward : public autograd::Node {
-  ExpBackward(Tensor& exponent);
-  virtual std::vector<Tensor> operator()(Tensor output_grad);
-};
-
 }  // namespace ember
 
 #endif  // !EMBER_OPS_EXP_H

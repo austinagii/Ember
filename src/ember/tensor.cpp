@@ -59,6 +59,10 @@ Tensor Tensor::matmul(Tensor& other) {
   return ember::matmul(*this, other);  
 }
 
+Tensor Tensor::exp() {
+  return ember::exp(*this);
+}
+
 bool operator==(const Tensor& left, const Tensor& right) {
   return xt::all(xt::equal(left.data_, right.data_));
 }

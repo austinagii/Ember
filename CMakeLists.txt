@@ -42,6 +42,7 @@ set(EMBER_SOURCES
   src/ember/autograd/accumulator.cpp
   src/ember/autograd/engine.cpp
   src/ember/autograd/edge.cpp
+  src/ember/autograd/context.cpp
   src/ember/ops/add.cpp
   src/ember/ops/sub.cpp
   src/ember/ops/mul.cpp
