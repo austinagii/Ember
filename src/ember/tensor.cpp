@@ -1,6 +1,6 @@
-#include <ember/autograd/node.h>  // Can this be removed?
 #include <ember/tensor.h>
 
+#include <ember/autograd/node.h>
 #include <xtensor/xrandom.hpp>
 
 #include <functional>
@@ -18,16 +18,6 @@ Tensor::Tensor(bool requires_grad) { this->requires_grad(requires_grad); }
 Tensor::Tensor(double value, bool requires_grad) : Tensor(requires_grad) {
   data_ = xt::xarray<double>({value});
 }
-
-Tensor& Tensor::requires_grad(bool requires_grad) {
-  requires_grad_ = requires_grad;
-  if (requires_grad_ && gradient_accumulator == nullptr) {
-    gradient_accumulator = new autograd::Accumulator(this);
-  }
-  return *this;
-}
-
-bool Tensor::requires_grad() const { return requires_grad_; }
 
 Tensor::Tensor(init_list<double> values, bool requires_grad)
     : Tensor(requires_grad) {
@@ -54,6 +44,27 @@ Tensor::Tensor(const Tensor& other)
   }
 }
 
+Tensor& Tensor::requires_grad(bool requires_grad) {
+  requires_grad_ = requires_grad;
+  if (requires_grad_ && gradient_accumulator == nullptr) {
+    gradient_accumulator = new autograd::Accumulator(this);
+  }
+  return *this;
+}
+
+bool Tensor::requires_grad() const { return requires_grad_; }
+
+autograd::Node* Tensor::get_gradient_fn() const {
+  if (gradient_fn == nullptr) {
+    return gradient_accumulator;
+  }
+  return gradient_fn;
+}
+
+void Tensor::set_gradient_fn(autograd::Node* gradient_fn) {
+  this->gradient_fn = gradient_fn;
+}
+
 void Tensor::backward(const Tensor& gradient) {
   if (gradient_fn == nullptr) {
     throw std::runtime_error(
@@ -64,8 +75,6 @@ void Tensor::backward(const Tensor& gradient) {
 }
 
 void Tensor::backward() { backward(Tensor::ones_like(*this)); }
-
-TensorSnapshot Tensor::save() { return TensorSnapshot(this); }
 
 Tensor Tensor::matmul(Tensor& other) { return ember::matmul(*this, other); }
 
@@ -79,28 +88,19 @@ bool Tensor::equals_approx(const Tensor& other) {
   return xt::allclose(this->data_, other.data_);
 }
 
-Tensor Tensor::ones_like(const Tensor& other) {
-  return Tensor::from_xarray_(xt::ones_like(other.data_));
-}
+TensorSnapshot Tensor::save() { return TensorSnapshot(this); }
 
 Tensor Tensor::from_shape(std::initializer_list<size_t> shape) {
   return Tensor::from_xarray_(xt::xarray<double>::from_shape(shape));
 }
 
+Tensor Tensor::ones_like(const Tensor& other) {
+  return Tensor::from_xarray_(xt::ones_like(other.data_));
+}
+
 Tensor Tensor::randn(std::initializer_list<size_t> shape, double mean,
                      double std) {
   return Tensor::from_xarray_(xt::random::randn<double>(shape, mean, std));
-}
-
-autograd::Node* Tensor::get_gradient_fn() const {
-  if (gradient_fn == nullptr) {
-    return gradient_accumulator;
-  }
-  return gradient_fn;
-}
-
-void Tensor::set_gradient_fn(autograd::Node* gradient_fn) {
-  this->gradient_fn = gradient_fn;
 }
 
 }  // namespace ember

@@ -39,24 +39,17 @@ namespace ember {
  * This class corresponds to the `Variable` class in PyTorch's autograd.
  */
 struct Tensor {
-private:
-  // The function that will be used to pass the gradient from this tensor to
-  // it's parents.
-  autograd::Node* gradient_fn = nullptr;
-  // Accumulates a sum of gradients for this tensor if it is a leaf tensor.
-  autograd::Node* gradient_accumulator = nullptr;
-  // Whether this tensor requires gradients to be computed and stored.
-  bool requires_grad_ = false;
-
 public:
-  // The multidemnsional array of data this tensor contains.
+  // The multidimensional array of data this tensor contains.
   xt::xarray<double> data_;
   // The gradient of this node w.r.t. the ancestor on which backward was
   // called.
   Tensor* gradient = nullptr;
 
+  // Default constructor
   Tensor();
 
+  // Constructor with requires_grad flag
   explicit Tensor(bool requires_grad);
 
   /**
@@ -68,19 +61,6 @@ public:
    *   Tensor t(1.0); // Creates a tensor with a single value 1.0
    */
   Tensor(double value, bool requires_grad = false);
-
-  /**
-   * @brief Sets whether this tensor requires gradients.
-   * @param requires_grad If true, the tensor will track gradients for autograd
-   * @return A reference to this tensor
-   */
-  Tensor& requires_grad(bool requires_grad);
-
-  /**
-   * @brief Gets whether this tensor requires gradients.
-   * @return True if the tensor requires gradients, false otherwise
-   */
-  bool requires_grad() const;
 
   /**
    * @brief Constructs a 1-dimensional tensor from a list of values.
@@ -127,6 +107,45 @@ public:
   Tensor(const Tensor& other);
 
   /**
+   * @brief Sets whether this tensor requires gradients.
+   * @param requires_grad If true, the tensor will track gradients for autograd
+   * @return A reference to this tensor
+   */
+  Tensor& requires_grad(bool requires_grad);
+
+  /**
+   * @brief Gets whether this tensor requires gradients.
+   * @return True if the tensor requires gradients, false otherwise
+   */
+  bool requires_grad() const;
+
+  /**
+   * @brief Gets the gradient function for this tensor.
+   * @return Pointer to the gradient function node
+   */
+  autograd::Node* get_gradient_fn() const;
+
+  /**
+   * @brief Sets the gradient function for this tensor.
+   * @param gradient_fn Pointer to the gradient function node
+   */
+  void set_gradient_fn(autograd::Node* gradient_fn);
+
+  /**
+   * @brief Access a tensor element (const version)
+   */
+  template <typename... Args> double operator()(Args... args) const {
+    return data_(args...);
+  }
+
+  /**
+   * @brief Access a tensor element (mutable version)
+   */
+  template <typename... Args> double& operator()(Args... args) {
+    return data_(args...);
+  }
+
+  /**
    * @brief Computes gradients for all input tensors that created this tensor,
    * using the provided gradient as the starting point for backpropagation.
    * @param gradient The initial gradient to begin backpropagation with
@@ -147,6 +166,10 @@ public:
    */
   Tensor matmul(Tensor& other);
 
+  /**
+   * @brief Computes the exponential of each element in the tensor.
+   * @return A new tensor with the exponential of each element
+   */
   Tensor exp();
 
   /**
@@ -171,19 +194,10 @@ public:
   TensorSnapshot save();
 
   /**
-   * @brief Access a tensor element (const version)
+   * @brief Creates a tensor from an existing xarray.
+   * @param data The xarray to create the tensor from
+   * @return A new tensor containing the provided data
    */
-  template <typename... Args> double operator()(Args... args) const {
-    return data_(args...);
-  }
-
-  /**
-   * @brief Access a tensor element (mutable version)
-   */
-  template <typename... Args> double& operator()(Args... args) {
-    return data_(args...);
-  }
-
   static Tensor from_xarray_(xt::xarray<double> data) {
     auto t = Tensor();
     t.data_ = data;
@@ -196,6 +210,10 @@ public:
    */
   static Tensor from_shape(std::initializer_list<size_t> shape);
 
+  /**
+   * @brief Creates a new tensor with the same shape as the input tensor, but
+   * with all elements set to 0.
+   */
   static Tensor zeros_like(const Tensor& other) {
     return Tensor::from_xarray_(xt::zeros_like(other.data_));
   }
@@ -224,9 +242,14 @@ public:
   static Tensor randn(std::initializer_list<size_t> shape, double mean = 0.0,
                       double std = 1.0);
 
-  autograd::Node* get_gradient_fn() const;
-
-  void set_gradient_fn(autograd::Node* gradient_fn);
+private:
+  // The function that will be used to pass the gradient from this tensor to
+  // its parents.
+  autograd::Node* gradient_fn = nullptr;
+  // Accumulates a sum of gradients for this tensor if it is a leaf tensor.
+  autograd::Node* gradient_accumulator = nullptr;
+  // Whether this tensor requires gradients to be computed and stored.
+  bool requires_grad_ = false;
 
   friend struct TensorSnapshot;
 };  // class Tensor
