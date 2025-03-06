@@ -13,12 +13,12 @@ static Tensor divide_tensors(Tensor& dividend, Tensor& divisor) {
   Tensor quotient =
       Tensor::from_xarray_(xt::eval(dividend.data_ / divisor.data_));
 
-  if (dividend.requires_grad || divisor.requires_grad) {
-    quotient.gradient_fn = new DivBackward(dividend, divisor);
-    quotient.gradient_fn->saved_tensors.insert(
-        quotient.gradient_fn->saved_tensors.begin(),
+  if (dividend.requires_grad() || divisor.requires_grad()) {
+    quotient.set_gradient_fn(new DivBackward(dividend, divisor));
+    quotient.get_gradient_fn()->saved_tensors.insert(
+        quotient.get_gradient_fn()->saved_tensors.begin(),
         {dividend.save(), divisor.save()});
-    quotient.requires_grad = true;
+    quotient.requires_grad(true);
   }
   return quotient;
 }
@@ -40,12 +40,11 @@ Tensor operator/(Tensor&& dividend, Tensor&& divisor) {
 }
 
 DivBackward::DivBackward(Tensor& dividend, Tensor& divisor) {
-  if (dividend.requires_grad) {
-    edges.push_back(
-        autograd::Edge(DIVIDEND_INDEX, dividend.get_gradient_edge()));
+  if (dividend.requires_grad()) {
+    edges.push_back(autograd::Edge(DIVIDEND_INDEX, dividend.get_gradient_fn()));
   }
-  if (divisor.requires_grad) {
-    edges.push_back(autograd::Edge(DIVISOR_INDEX, divisor.get_gradient_edge()));
+  if (divisor.requires_grad()) {
+    edges.push_back(autograd::Edge(DIVISOR_INDEX, divisor.get_gradient_fn()));
   }
 }
 

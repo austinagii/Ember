@@ -13,11 +13,11 @@ TEST(TensorDot, DotProductIsCorrectlyCalculated) {
 
   c.backward();
 
-  ASSERT_TRUE(c.requires_grad);
+  ASSERT_TRUE(c.requires_grad());
 
-  ASSERT_TRUE(a.requires_grad && a.gradient != nullptr);
+  ASSERT_TRUE(a.requires_grad() && a.gradient != nullptr);
   EXPECT_TRUE(a.gradient->equals_approx(Tensor({{13.0, 11.0}, {13.0, 11.0}})));
 
-  ASSERT_TRUE(b.requires_grad && b.gradient != nullptr);
+  ASSERT_TRUE(b.requires_grad() && b.gradient != nullptr);
   EXPECT_TRUE(b.gradient->equals_approx(Tensor({{7.0, 7.0}, {6.0, 6.0}})));
 }

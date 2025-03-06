@@ -13,55 +13,63 @@ namespace ember {
 
 Tensor::Tensor() {}
 
-Tensor::Tensor(double value, bool requires_grad)
-    : data_({value}), requires_grad(requires_grad) {}
+Tensor::Tensor(bool requires_grad) { this->requires_grad(requires_grad); }
+
+Tensor::Tensor(double value, bool requires_grad) : Tensor(requires_grad) {
+  data_ = xt::xarray<double>({value});
+}
+
+Tensor& Tensor::requires_grad(bool requires_grad) {
+  requires_grad_ = requires_grad;
+  if (requires_grad_ && gradient_accumulator == nullptr) {
+    gradient_accumulator = new autograd::Accumulator(this);
+  }
+  return *this;
+}
+
+bool Tensor::requires_grad() const { return requires_grad_; }
 
 Tensor::Tensor(init_list<double> values, bool requires_grad)
-    : data_(values), requires_grad(requires_grad) {}
+    : Tensor(requires_grad) {
+  data_ = xt::xarray<double>(values);
+}
 
 Tensor::Tensor(init_list<init_list<double>> values, bool requires_grad)
-    : data_(values), requires_grad(requires_grad) {}
+    : Tensor(requires_grad) {
+  data_ = xt::xarray<double>(values);
+}
 
 Tensor::Tensor(init_list<init_list<init_list<double>>> values,
                bool requires_grad)
-    : data_(values), requires_grad(requires_grad) {}
+    : Tensor(requires_grad) {
+  data_ = xt::xarray<double>(values);
+}
 
 Tensor::Tensor(const Tensor& other)
     : data_(other.data_), gradient_fn(other.gradient_fn),
-      gradient_accumulator(other.gradient_accumulator),
-      requires_grad(other.requires_grad) {
+      gradient_accumulator(other.gradient_accumulator) {
+  requires_grad_ = other.requires_grad();
   if (other.gradient != nullptr) {
     gradient = new Tensor(*other.gradient);
   }
 }
 
 void Tensor::backward(const Tensor& gradient) {
+  if (gradient_fn == nullptr) {
+    throw std::runtime_error(
+        "backward called on a tensor that has no gradient function");
+  }
   autograd::Engine engine;
   engine.backward(this->gradient_fn, gradient);
 }
 
 void Tensor::backward() { backward(Tensor::ones_like(*this)); }
 
-autograd::Node* Tensor::get_gradient_edge() {
-  if (gradient_fn != nullptr) {
-    return gradient_fn;
-  }
-
-  if (gradient_accumulator == nullptr) {
-    gradient_accumulator = new autograd::Accumulator(this);
-  }
-  return gradient_accumulator;
-}
-
 TensorSnapshot Tensor::save() { return TensorSnapshot(this); }
 
-Tensor Tensor::matmul(Tensor& other) {
-  return ember::matmul(*this, other);  
-}
+Tensor Tensor::matmul(Tensor& other) { return ember::matmul(*this, other); }
 
-Tensor Tensor::exp() {
-  return ember::exp(*this);
-}
+Tensor Tensor::exp() { return ember::exp(*this); }
 
 bool operator==(const Tensor& left, const Tensor& right) {
   return xt::all(xt::equal(left.data_, right.data_));
@@ -82,6 +90,17 @@ Tensor Tensor::from_shape(std::initializer_list<size_t> shape) {
 Tensor Tensor::randn(std::initializer_list<size_t> shape, double mean,
                      double std) {
   return Tensor::from_xarray_(xt::random::randn<double>(shape, mean, std));
+}
+
+autograd::Node* Tensor::get_gradient_fn() const {
+  if (gradient_fn == nullptr) {
+    return gradient_accumulator;
+  }
+  return gradient_fn;
+}
+
+void Tensor::set_gradient_fn(autograd::Node* gradient_fn) {
+  this->gradient_fn = gradient_fn;
 }
 
 }  // namespace ember

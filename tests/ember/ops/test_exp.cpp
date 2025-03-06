@@ -15,6 +15,6 @@ TEST(TensorExponentiation, ExponentIsCorrectlyComputed) {
 
   actual_result.backward();
 
-  ASSERT_TRUE(a.requires_grad && a.gradient != nullptr);
+  ASSERT_TRUE(a.requires_grad() && a.gradient != nullptr);
   EXPECT_TRUE(a.gradient->equals_approx(expected_result));
 }

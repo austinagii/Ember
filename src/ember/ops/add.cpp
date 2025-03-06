@@ -15,11 +15,12 @@ std::size_t ADDEND_INDEX = 1;
 static Tensor add_tensors(Tensor& augend, Tensor& addend) {
   Tensor sum = Tensor::from_xarray_(xt::eval(augend.data_ + addend.data_));
 
-  if (augend.requires_grad || addend.requires_grad) {
-    sum.gradient_fn = new AddBackward(augend, addend);
-    sum.gradient_fn->saved_tensors.insert(
-        sum.gradient_fn->saved_tensors.begin(), {augend.save(), addend.save()});
-    sum.requires_grad = true;
+  if (augend.requires_grad() || addend.requires_grad()) {
+    sum.set_gradient_fn(new AddBackward(augend, addend));
+    sum.get_gradient_fn()->saved_tensors.insert(
+        sum.get_gradient_fn()->saved_tensors.begin(),
+        {augend.save(), addend.save()});
+    sum.requires_grad(true);
   }
   return sum;
 }
@@ -41,11 +42,11 @@ Tensor operator+(Tensor&& augend, Tensor&& addend) {
 }
 
 AddBackward::AddBackward(Tensor& augend, Tensor& addend) {
-  if (augend.requires_grad) {
-    edges.push_back(autograd::Edge(AUGEND_INDEX, augend.get_gradient_edge()));
+  if (augend.requires_grad()) {
+    edges.push_back(autograd::Edge(AUGEND_INDEX, augend.get_gradient_fn()));
   }
-  if (addend.requires_grad) {
-    edges.push_back(autograd::Edge(ADDEND_INDEX, addend.get_gradient_edge()));
+  if (addend.requires_grad()) {
+    edges.push_back(autograd::Edge(ADDEND_INDEX, addend.get_gradient_fn()));
   }
 }
 

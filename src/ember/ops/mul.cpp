@@ -9,12 +9,12 @@ std::size_t MULTIPLIER_INDEX = 1;
 static Tensor multiply_tensors(Tensor& multiplicand, Tensor& multiplier) {
   Tensor product =
       Tensor::from_xarray_(xt::eval(multiplicand.data_ * multiplier.data_));
-  if (multiplicand.requires_grad || multiplier.requires_grad) {
-    product.gradient_fn = new MulBackward(multiplicand, multiplier);
-    product.gradient_fn->saved_tensors.insert(
-        product.gradient_fn->saved_tensors.begin(),
+  if (multiplicand.requires_grad() || multiplier.requires_grad()) {
+    product.set_gradient_fn(new MulBackward(multiplicand, multiplier));
+    product.get_gradient_fn()->saved_tensors.insert(
+        product.get_gradient_fn()->saved_tensors.begin(),
         {multiplicand.save(), multiplier.save()});
-    product.requires_grad = true;
+    product.requires_grad(true);
   }
   return product;
 }
@@ -36,13 +36,13 @@ Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier) {
 }
 
 MulBackward::MulBackward(Tensor& multiplicand, Tensor& multiplier) {
-  if (multiplicand.requires_grad) {
+  if (multiplicand.requires_grad()) {
     edges.push_back(
-        autograd::Edge(MULTIPLICAND_INDEX, multiplicand.get_gradient_edge()));
+        autograd::Edge(MULTIPLICAND_INDEX, multiplicand.get_gradient_fn()));
   }
-  if (multiplier.requires_grad) {
+  if (multiplier.requires_grad()) {
     edges.push_back(
-        autograd::Edge(MULTIPLIER_INDEX, multiplier.get_gradient_edge()));
+        autograd::Edge(MULTIPLIER_INDEX, multiplier.get_gradient_fn()));
   }
 }
 

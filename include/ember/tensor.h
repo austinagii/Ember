@@ -6,10 +6,10 @@
 #include <ember/autograd/node.h>
 #include <ember/ops/add.h>
 #include <ember/ops/div.h>
+#include <ember/ops/exp.h>
+#include <ember/ops/matmul.h>
 #include <ember/ops/mul.h>
 #include <ember/ops/sub.h>
-#include <ember/ops/matmul.h>
-#include <ember/ops/exp.h>
 
 #include <ember/tensor_snapshot.h>
 
@@ -39,20 +39,25 @@ namespace ember {
  * This class corresponds to the `Variable` class in PyTorch's autograd.
  */
 struct Tensor {
-  // The multidemnsional array of data this tensor contains.
-  xt::xarray<double> data_;
-  // The gradient of this node w.r.t. the ancestor on which backward was
-  // called.
-  Tensor* gradient = nullptr;
+private:
   // The function that will be used to pass the gradient from this tensor to
   // it's parents.
   autograd::Node* gradient_fn = nullptr;
   // Accumulates a sum of gradients for this tensor if it is a leaf tensor.
   autograd::Node* gradient_accumulator = nullptr;
   // Whether this tensor requires gradients to be computed and stored.
-  bool requires_grad = false;
+  bool requires_grad_ = false;
+
+public:
+  // The multidemnsional array of data this tensor contains.
+  xt::xarray<double> data_;
+  // The gradient of this node w.r.t. the ancestor on which backward was
+  // called.
+  Tensor* gradient = nullptr;
 
   Tensor();
+
+  explicit Tensor(bool requires_grad);
 
   /**
    * @brief Constructs a tensor with a single value.
@@ -63,6 +68,19 @@ struct Tensor {
    *   Tensor t(1.0); // Creates a tensor with a single value 1.0
    */
   Tensor(double value, bool requires_grad = false);
+
+  /**
+   * @brief Sets whether this tensor requires gradients.
+   * @param requires_grad If true, the tensor will track gradients for autograd
+   * @return A reference to this tensor
+   */
+  Tensor& requires_grad(bool requires_grad);
+
+  /**
+   * @brief Gets whether this tensor requires gradients.
+   * @return True if the tensor requires gradients, false otherwise
+   */
+  bool requires_grad() const;
 
   /**
    * @brief Constructs a 1-dimensional tensor from a list of values.
@@ -122,7 +140,7 @@ struct Tensor {
   void backward();
 
   /**
-   * @brief Performs the matrix multiplication between this tensor and the one 
+   * @brief Performs the matrix multiplication between this tensor and the one
    * specified.
    *
    * This is equivalent to `ember::matmul(this, other)`.
@@ -146,11 +164,6 @@ struct Tensor {
    * there is element-wise equality within a given range.
    */
   bool equals_approx(const Tensor& other);
-
-  /**
-   * @brief Returns the gradient edge for this tensor.
-   */
-  autograd::Node* get_gradient_edge();
 
   /**
    * @brief Saves the current state of this tensor.
@@ -211,8 +224,12 @@ struct Tensor {
   static Tensor randn(std::initializer_list<size_t> shape, double mean = 0.0,
                       double std = 1.0);
 
+  autograd::Node* get_gradient_fn() const;
+
+  void set_gradient_fn(autograd::Node* gradient_fn);
+
   friend struct TensorSnapshot;
-};  // struct Tensor
+};  // class Tensor
 
 }  // namespace ember
 

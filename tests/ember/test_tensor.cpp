@@ -11,8 +11,7 @@ TEST(TensorConstructors, DefaultConstructorCreatesEmptyTensor) {
   EXPECT_EQ(t.data_.size(), 1);
   EXPECT_TRUE(xt::allclose(t.data_, xt::xarray<float>{}));
   EXPECT_EQ(t.gradient, nullptr);
-  EXPECT_EQ(t.gradient_fn, nullptr);
-  EXPECT_EQ(t.gradient_accumulator, nullptr);
+  EXPECT_EQ(t.get_gradient_fn(), nullptr);
 }
 
 TEST(TensorConstructors, OneDimensionalInitializerList) {
@@ -48,8 +47,7 @@ TEST(TensorStaticInitializers, FromXArrayCreatesCorrectTensor) {
   Tensor t = Tensor::from_xarray_(data);
   EXPECT_TRUE(xt::allclose(t.data_, data));
   EXPECT_EQ(t.gradient, nullptr);
-  EXPECT_EQ(t.gradient_fn, nullptr);
-  EXPECT_EQ(t.gradient_accumulator, nullptr);
+  EXPECT_EQ(t.get_gradient_fn(), nullptr);
 }
 
 TEST(TensorStaticInitializers, ZerosLikeCreatesMatchingShape) {
@@ -59,8 +57,7 @@ TEST(TensorStaticInitializers, ZerosLikeCreatesMatchingShape) {
   EXPECT_EQ(zeros.data_.shape(), original.data_.shape());
   EXPECT_TRUE(xt::allclose(zeros.data_, xt::zeros_like(original.data_)));
   EXPECT_EQ(zeros.gradient, nullptr);
-  EXPECT_EQ(zeros.gradient_fn, nullptr);
-  EXPECT_EQ(zeros.gradient_accumulator, nullptr);
+  EXPECT_EQ(zeros.get_gradient_fn(), nullptr);
 }
 
 TEST(TensorConstructors, EmptyInitializerListCreatesScalarTensor) {
@@ -73,8 +70,7 @@ TEST(TensorConstructors, EmptyInitializerListCreatesScalarTensor) {
 TEST(TensorConstructors, InitializerListsPreserveGradientProperties) {
   Tensor t = {{1.0, 2.0}, {3.0, 4.0}};
   EXPECT_EQ(t.gradient, nullptr);
-  EXPECT_EQ(t.gradient_fn, nullptr);
-  EXPECT_EQ(t.gradient_accumulator, nullptr);
+  EXPECT_EQ(t.get_gradient_fn(), nullptr);
 }
 
 TEST(TensorCreation, SuccessfullyCreatesTensorWithRandomValues) {
@@ -111,9 +107,8 @@ TEST(TensorCreation, RandnHandlesEmptyShape) {
 TEST(TensorCreation, RandnPreservesGradientProperties) {
   Tensor t = Tensor::randn({2, 2}, 0.0, 1.0);
   EXPECT_EQ(t.gradient, nullptr);
-  EXPECT_EQ(t.gradient_fn, nullptr);
-  EXPECT_EQ(t.gradient_accumulator, nullptr);
-  EXPECT_FALSE(t.requires_grad);
+  EXPECT_EQ(t.get_gradient_fn(), nullptr);
+  EXPECT_FALSE(t.requires_grad());
 }
 
 TEST(TensorCreation, RandnShapeIsCorrect) {

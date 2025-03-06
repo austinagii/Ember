@@ -130,7 +130,7 @@ TEST(TensorAddition, SingleElementBroadcastToLarge) {
   b(1, 0, 1) = 6.0;
   b(1, 1, 0) = 7.0;
   b(1, 1, 1) = 8.0;
-  b.requires_grad = true;
+  b.requires_grad(true);
 
   Tensor c = a + b;
   Tensor expected = {{{2.0, 3.0}, {4.0, 5.0}}, {{6.0, 7.0}, {8.0, 9.0}}};
@@ -150,13 +150,13 @@ TEST(TensorAddition, ComplexBroadcasting) {
   a(0, 1, 0) = 2.0;
   a(1, 0, 0) = 3.0;
   a(1, 1, 0) = 4.0;
-  a.requires_grad = true;
+  a.requires_grad(true);
 
   Tensor b = Tensor::from_shape({1, 1, 3});
   b(0, 0, 0) = 1.0;
   b(0, 0, 1) = 2.0;
   b(0, 0, 2) = 3.0;
-  b.requires_grad = true;
+  b.requires_grad(true);
 
   Tensor c = a + b;
 
