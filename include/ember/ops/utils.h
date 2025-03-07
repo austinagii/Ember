@@ -36,7 +36,9 @@
       output.set_gradient_fn(new name##Backward(ctx, input));                  \
     }                                                                          \
     return output;                                                             \
-  }
+  }                                                                            \
+                                                                               \
+  Tensor name(Tensor&& input) { return name(input); }
 
 #define REGISTER_BINARY_OP(name, forward_fn, backward_fn)                      \
   REGISTER_OP_BACKWARD(name, backward_fn)                                      \

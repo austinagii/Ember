@@ -12,6 +12,7 @@ namespace ember {
  * i.e. $y_{i} = e^{x_i}$
  */
 Tensor exp(Tensor& exponent);
+Tensor exp(Tensor&& exponent);
 
 }  // namespace ember
 
