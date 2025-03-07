@@ -103,4 +103,18 @@ Tensor Tensor::randn(std::initializer_list<size_t> shape, double mean,
   return Tensor::from_xarray_(xt::random::randn<double>(shape, mean, std));
 }
 
+Tensor operator+(Tensor& augend, Tensor& addend) { return add(augend, addend); }
+
+Tensor operator+(Tensor& augend, Tensor&& addend) {
+  return add(augend, addend);
+}
+
+Tensor operator+(Tensor&& augend, Tensor& addend) {
+  return add(augend, addend);
+}
+
+Tensor operator+(Tensor&& augend, Tensor&& addend) {
+  return add(augend, addend);
+}
+
 }  // namespace ember

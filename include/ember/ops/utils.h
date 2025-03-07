@@ -3,7 +3,14 @@
 
 #include "xtensor/xarray.hpp"
 
-// TODO: Consider replacing macro with factory functions
+namespace ember {
+
+xt::xarray<double> reduce_broadcast(
+    const xt::xarray<double>& source,
+    const xt::xarray<double>::shape_type& target_shape);
+
+}  // namespace ember
+
 #define REGISTER_OP_BACKWARD(name, backward_fn)                                \
   struct name##Backward : public autograd::Node {                              \
     template <typename... Tensors>                                             \
@@ -51,14 +58,16 @@
       output.set_gradient_fn(new name##Backward(ctx, input1, input2));         \
     }                                                                          \
     return output;                                                             \
-  }
-
-namespace ember {
-
-xt::xarray<double> reduce_broadcast(
-    const xt::xarray<double>& source,
-    const xt::xarray<double>::shape_type& target_shape);
-
-}  // namespace ember
+  }                                                                            \
+                                                                               \
+  Tensor name(Tensor&& input1, Tensor& input2) {                               \
+    return name(input1, input2);                                               \
+  }                                                                            \
+                                                                               \
+  Tensor name(Tensor& input1, Tensor&& input2) {                               \
+    return name(input1, input2);                                               \
+  }                                                                            \
+                                                                               \
+  Tensor name(Tensor&& input1, Tensor&& input2) { return name(input1, input2); }
 
 #endif  // EMBER_OPS_UTILS_H

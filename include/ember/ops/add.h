@@ -15,10 +15,20 @@ namespace ember {
  */
 Tensor add(Tensor& augend, Tensor& addend);
 
-Tensor operator+(Tensor& augend, Tensor& addend);
-Tensor operator+(Tensor& augend, Tensor&& addend);
-Tensor operator+(Tensor&& augend, Tensor& addend);
-Tensor operator+(Tensor&& augend, Tensor&& addend);
+/**
+ * @brief Add two tensors and return a new tensor representing the sum.
+ */
+Tensor add(Tensor& augend, Tensor&& addend);
+
+/**
+ * @brief Add two tensors and return a new tensor representing the sum.
+ */
+Tensor add(Tensor&& augend, Tensor& addend);
+
+/**
+ * @brief Add two tensors and return a new tensor representing the sum.
+ */
+Tensor add(Tensor&& augend, Tensor&& addend);
 
 }  // namespace ember
 

@@ -12,10 +12,12 @@ namespace ember {
 std::size_t AUGEND_INDEX = 0;
 std::size_t ADDEND_INDEX = 1;
 
+/**
+ * @brief Add two tensors and return a new tensor representing the sum.
+ */
 static Tensor add_forward(autograd::Context& context, Tensor& augend,
                           Tensor& addend) {
-  context.save_for_backward(augend);
-  context.save_for_backward(addend);
+  context.save_for_backward(augend, addend);
   return Tensor::from_xarray_(xt::eval(augend.data_ + addend.data_));
 }
 
@@ -48,15 +50,5 @@ std::vector<Tensor> add_backward(autograd::Context& context,
 }
 
 REGISTER_BINARY_OP(add, add_forward, add_backward);
-
-// clang-format off
-Tensor operator+(Tensor& augend, Tensor& addend) { return add(augend, addend); }
-
-Tensor operator+(Tensor& augend, Tensor&& addend) { return add(augend, addend); }
-
-Tensor operator+(Tensor&& augend, Tensor& addend) { return add(augend, addend); }
-
-Tensor operator+(Tensor&& augend, Tensor&& addend) { return add(augend, addend); }
-// clang-format on
 
 }  // namespace ember

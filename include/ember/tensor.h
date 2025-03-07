@@ -254,6 +254,11 @@ private:
   friend struct TensorSnapshot;
 };  // class Tensor
 
+Tensor operator+(Tensor& augend, Tensor& addend);
+Tensor operator+(Tensor& augend, Tensor&& addend);
+Tensor operator+(Tensor&& augend, Tensor& addend);
+Tensor operator+(Tensor&& augend, Tensor&& addend);
+
 }  // namespace ember
 
 #endif  // EMBER_TENSOR_H
