@@ -16,7 +16,8 @@ static Tensor mul_forward(autograd::Context& context, Tensor& multiplicand,
 }
 
 /**
- * @brief Compute the gradients of both inputs of a multiplication operation (a*b)
+ * @brief Compute the gradients of both inputs of a multiplication operation
+ * (a*b)
  *
  * Given that c = a * b and the partial derivate of c w.r.t some output o
  * (∂c/∂o) is `output_grad`, then the partial derivatives of a and b are as
@@ -25,12 +26,13 @@ static Tensor mul_forward(autograd::Context& context, Tensor& multiplicand,
  * - ∂a/∂o = `output_grad` * b
  * - ∂b/∂o = `output_grad` * a
  *
- * @param output_grad The gradient of the output of the multiplication operation.
+ * @param output_grad The gradient of the output of the multiplication
+ * operation.
  * @return A vector containing the gradients of the inputs of the multiplication
  * operation.
  */
 std::vector<Tensor> mul_backward(autograd::Context& context,
-                                Tensor output_grad) {
+                                 Tensor output_grad) {
   auto multiplicand = context.saved_tensors[MULTIPLICAND_INDEX];
   auto multiplier = context.saved_tensors[MULTIPLIER_INDEX];
 
@@ -49,25 +51,5 @@ std::vector<Tensor> mul_backward(autograd::Context& context,
 }
 
 REGISTER_BINARY_OP(mul, mul_forward, mul_backward);
-
-static Tensor multiply_tensors(Tensor& multiplicand, Tensor& multiplier) {
-  return mul(multiplicand, multiplier);
-}
-
-Tensor operator*(Tensor& multiplicand, Tensor& multiplier) {
-  return multiply_tensors(multiplicand, multiplier);
-}
-
-Tensor operator*(Tensor&& multiplicand, Tensor& multiplier) {
-  return multiply_tensors(multiplicand, multiplier);
-}
-
-Tensor operator*(Tensor& multiplicand, Tensor&& multiplier) {
-  return multiply_tensors(multiplicand, multiplier);
-}
-
-Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier) {
-  return multiply_tensors(multiplicand, multiplier);
-}
 
 }  // namespace ember

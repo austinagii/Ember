@@ -15,10 +15,20 @@ namespace ember {
  */
 Tensor mul(Tensor& multiplicand, Tensor& multiplier);
 
-Tensor operator*(Tensor& multiplicand, Tensor& multiplier);
-Tensor operator*(Tensor&& multiplicand, Tensor& multiplier);
-Tensor operator*(Tensor& multiplicand, Tensor&& multiplier);
-Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier);
+/**
+ * @brief Multiply two tensors and return a new tensor representing the product.
+ */
+Tensor mul(Tensor&& multiplicand, Tensor& multiplier);
+
+/**
+ * @brief Multiply two tensors and return a new tensor representing the product.
+ */
+Tensor mul(Tensor& multiplicand, Tensor&& multiplier);
+
+/**
+ * @brief Multiply two tensors and return a new tensor representing the product.
+ */
+Tensor mul(Tensor&& multiplicand, Tensor&& multiplier);
 
 }  // namespace ember
 

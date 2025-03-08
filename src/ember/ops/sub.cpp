@@ -30,7 +30,7 @@ static Tensor sub_forward(autograd::Context& context, Tensor& minuend,
  * operation.
  */
 std::vector<Tensor> sub_backward(autograd::Context& context,
-                                Tensor output_grad) {
+                                 Tensor output_grad) {
   auto minuend = context.saved_tensors[MINUEND_INDEX];
   auto subtrahend = context.saved_tensors[SUBTRAHEND_INDEX];
 
@@ -47,25 +47,5 @@ std::vector<Tensor> sub_backward(autograd::Context& context,
 }
 
 REGISTER_BINARY_OP(sub, sub_forward, sub_backward);
-
-static Tensor subtract_tensors(Tensor& minuend, Tensor& subtrahend) {
-  return sub(minuend, subtrahend);
-}
-
-Tensor operator-(Tensor& minuend, Tensor& subtrahend) {
-  return subtract_tensors(minuend, subtrahend);
-}
-
-Tensor operator-(Tensor&& minuend, Tensor& subtrahend) {
-  return subtract_tensors(minuend, subtrahend);
-}
-
-Tensor operator-(Tensor& minuend, Tensor&& subtrahend) {
-  return subtract_tensors(minuend, subtrahend);
-}
-
-Tensor operator-(Tensor&& minuend, Tensor&& subtrahend) {
-  return subtract_tensors(minuend, subtrahend);
-}
 
 }  // namespace ember

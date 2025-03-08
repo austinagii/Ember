@@ -33,7 +33,7 @@ static Tensor div_forward(autograd::Context& context, Tensor& dividend,
  * operation.
  */
 std::vector<Tensor> div_backward(autograd::Context& context,
-                                Tensor output_grad) {
+                                 Tensor output_grad) {
   auto dividend = context.saved_tensors[DIVIDEND_INDEX];
   auto divisor = context.saved_tensors[DIVISOR_INDEX];
 
@@ -50,25 +50,5 @@ std::vector<Tensor> div_backward(autograd::Context& context,
 }
 
 REGISTER_BINARY_OP(div, div_forward, div_backward);
-
-static Tensor divide_tensors(Tensor& dividend, Tensor& divisor) {
-  return div(dividend, divisor);
-}
-
-Tensor operator/(Tensor& dividend, Tensor& divisor) {
-  return divide_tensors(dividend, divisor);
-}
-
-Tensor operator/(Tensor&& dividend, Tensor& divisor) {
-  return divide_tensors(dividend, divisor);
-}
-
-Tensor operator/(Tensor& dividend, Tensor&& divisor) {
-  return divide_tensors(dividend, divisor);
-}
-
-Tensor operator/(Tensor&& dividend, Tensor&& divisor) {
-  return divide_tensors(dividend, divisor);
-}
 
 }  // namespace ember

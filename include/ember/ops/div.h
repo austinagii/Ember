@@ -15,10 +15,20 @@ namespace ember {
  */
 Tensor div(Tensor& dividend, Tensor& divisor);
 
-Tensor operator/(Tensor& dividend, Tensor& divisor);
-Tensor operator/(Tensor&& dividend, Tensor& divisor);
-Tensor operator/(Tensor& dividend, Tensor&& divisor);
-Tensor operator/(Tensor&& dividend, Tensor&& divisor);
+/**
+ * @brief Divide two tensors and return a new tensor representing the quotient.
+ */
+Tensor div(Tensor& dividend, Tensor&& divisor);
+
+/**
+ * @brief Divide two tensors and return a new tensor representing the quotient.
+ */
+Tensor div(Tensor&& dividend, Tensor& divisor);
+
+/**
+ * @brief Divide two tensors and return a new tensor representing the quotient.
+ */
+Tensor div(Tensor&& dividend, Tensor&& divisor);
 
 }  // namespace ember
 

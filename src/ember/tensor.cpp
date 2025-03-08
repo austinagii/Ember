@@ -117,4 +117,52 @@ Tensor operator+(Tensor&& augend, Tensor&& addend) {
   return add(augend, addend);
 }
 
+Tensor operator/(Tensor& dividend, Tensor& divisor) {
+  return div(dividend, divisor);
+}
+
+Tensor operator/(Tensor&& dividend, Tensor& divisor) {
+  return div(dividend, divisor);
+}
+
+Tensor operator/(Tensor& dividend, Tensor&& divisor) {
+  return div(dividend, divisor);
+}
+
+Tensor operator/(Tensor&& dividend, Tensor&& divisor) {
+  return div(dividend, divisor);
+}
+
+Tensor operator*(Tensor& multiplicand, Tensor& multiplier) {
+  return mul(multiplicand, multiplier);
+}
+
+Tensor operator*(Tensor&& multiplicand, Tensor& multiplier) {
+  return mul(multiplicand, multiplier);
+}
+
+Tensor operator*(Tensor& multiplicand, Tensor&& multiplier) {
+  return mul(multiplicand, multiplier);
+}
+
+Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier) {
+  return mul(multiplicand, multiplier);
+}
+
+Tensor operator-(Tensor& minuend, Tensor& subtrahend) {
+  return sub(minuend, subtrahend);
+}
+
+Tensor operator-(Tensor&& minuend, Tensor& subtrahend) {
+  return sub(minuend, subtrahend);
+}
+
+Tensor operator-(Tensor& minuend, Tensor&& subtrahend) {
+  return sub(minuend, subtrahend);
+}
+
+Tensor operator-(Tensor&& minuend, Tensor&& subtrahend) {
+  return sub(minuend, subtrahend);
+}
+
 }  // namespace ember

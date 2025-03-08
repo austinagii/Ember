@@ -258,6 +258,18 @@ Tensor operator+(Tensor& augend, Tensor& addend);
 Tensor operator+(Tensor& augend, Tensor&& addend);
 Tensor operator+(Tensor&& augend, Tensor& addend);
 Tensor operator+(Tensor&& augend, Tensor&& addend);
+Tensor operator/(Tensor& dividend, Tensor& divisor);
+Tensor operator/(Tensor&& dividend, Tensor& divisor);
+Tensor operator/(Tensor& dividend, Tensor&& divisor);
+Tensor operator/(Tensor&& dividend, Tensor&& divisor);
+Tensor operator*(Tensor& multiplicand, Tensor& multiplier);
+Tensor operator*(Tensor&& multiplicand, Tensor& multiplier);
+Tensor operator*(Tensor& multiplicand, Tensor&& multiplier);
+Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier);
+Tensor operator-(Tensor& minuend, Tensor& subtrahend);
+Tensor operator-(Tensor&& minuend, Tensor& subtrahend);
+Tensor operator-(Tensor& minuend, Tensor&& subtrahend);
+Tensor operator-(Tensor&& minuend, Tensor&& subtrahend);
 
 }  // namespace ember
 

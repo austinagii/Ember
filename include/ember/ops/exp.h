@@ -12,6 +12,12 @@ namespace ember {
  * i.e. $y_{i} = e^{x_i}$
  */
 Tensor exp(Tensor& exponent);
+
+/**
+ * @brief Perform the exponent operation on each element in the tensor.
+ *
+ * i.e. $y_{i} = e^{x_i}$
+ */
 Tensor exp(Tensor&& exponent);
 
 }  // namespace ember
