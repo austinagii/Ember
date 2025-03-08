@@ -9,22 +9,7 @@ namespace ember {
 /**
  * Performs matrix multiplication of a and b.
  */
-Tensor matmul(Tensor& a, Tensor& b);
-
-/**
- * Performs matrix multiplication of a and b.
- */
-Tensor matmul(Tensor&& a, Tensor&& b);
-
-/**
- * Performs matrix multiplication of a and b.
- */
-Tensor matmul(Tensor&& a, Tensor& b);
-
-/**
- * Performs matrix multiplication of a and b.
- */
-Tensor matmul(Tensor& a, Tensor&& b);
+Tensor matmul(const Tensor& a, const Tensor& b);
 
 }  // namespace ember
 

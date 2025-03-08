@@ -17,18 +17,13 @@ struct Context {
    */
   std::vector<ember::TensorSnapshot> saved_tensors;
 
-  template <typename... Tensors> void save_for_backward(Tensors&... tensors) {
-    (save_for_backward(tensors), ...);
+  template <typename... Tensors>
+  void save_for_backward(Tensors&... tensors) {
+    auto _save_for_backward = [this](auto& tensor) {
+      saved_tensors.emplace_back(tensor.save());
+    };
+    (_save_for_backward(tensors), ...);
   }
-
-  /**
-   * @brief Saves a tensor for backward computation.
-   *
-   * This function is used to save a tensor for backward computation. It
-   * captures the tensor's value and shape at the time of the call, which can
-   * be used during the backward pass to compute accurate gradients.
-   */
-  void save_for_backward(ember::Tensor& tensor);
 };
 
 }  // namespace ember::autograd

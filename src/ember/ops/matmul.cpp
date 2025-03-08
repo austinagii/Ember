@@ -7,14 +7,15 @@ namespace ember {
 
 struct MatmulBackward;
 
-Tensor matmul_forward(autograd::Context& ctx, Tensor& a, Tensor& b) {
+Tensor matmul_forward(autograd::Context& ctx, const Tensor& a,
+                      const Tensor& b) {
   ctx.save_for_backward(a);
   ctx.save_for_backward(b);
   return Tensor::from_xarray_(xt::linalg::dot(a.data_, b.data_));
 }
 
 std::vector<Tensor> matmul_backward(autograd::Context& ctx,
-                                    Tensor output_grad) {
+                                    const Tensor& output_grad) {
   return {Tensor::from_xarray_(xt::linalg::dot(
               output_grad.data_, xt::transpose(ctx.saved_tensors[1].data_))),
           Tensor::from_xarray_(xt::linalg::dot(

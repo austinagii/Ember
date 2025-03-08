@@ -8,8 +8,8 @@ namespace ember {
 std::size_t DIVIDEND_INDEX = 0;
 std::size_t DIVISOR_INDEX = 1;
 
-static Tensor div_forward(autograd::Context& context, Tensor& dividend,
-                          Tensor& divisor) {
+static Tensor div_forward(autograd::Context& context, const Tensor& dividend,
+                          const Tensor& divisor) {
   if (xt::any(xt::equal(divisor.data_, 0.0))) {
     throw std::runtime_error("Division by zero is not allowed");
   }
@@ -33,7 +33,7 @@ static Tensor div_forward(autograd::Context& context, Tensor& dividend,
  * operation.
  */
 std::vector<Tensor> div_backward(autograd::Context& context,
-                                 Tensor output_grad) {
+                                 const Tensor& output_grad) {
   auto dividend = context.saved_tensors[DIVIDEND_INDEX];
   auto divisor = context.saved_tensors[DIVISOR_INDEX];
 

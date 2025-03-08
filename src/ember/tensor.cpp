@@ -88,7 +88,7 @@ bool Tensor::equals_approx(const Tensor& other) {
   return xt::allclose(this->data_, other.data_);
 }
 
-TensorSnapshot Tensor::save() { return TensorSnapshot(this); }
+TensorSnapshot Tensor::save() const { return TensorSnapshot(*this); }
 
 Tensor Tensor::from_shape(std::initializer_list<size_t> shape) {
   return Tensor::from_xarray_(xt::xarray<double>::from_shape(shape));
@@ -103,65 +103,19 @@ Tensor Tensor::randn(std::initializer_list<size_t> shape, double mean,
   return Tensor::from_xarray_(xt::random::randn<double>(shape, mean, std));
 }
 
-Tensor operator+(Tensor& augend, Tensor& addend) { return add(augend, addend); }
-
-Tensor operator+(Tensor& augend, Tensor&& addend) {
+Tensor operator+(const Tensor& augend, const Tensor& addend) {
   return add(augend, addend);
 }
 
-Tensor operator+(Tensor&& augend, Tensor& addend) {
-  return add(augend, addend);
-}
-
-Tensor operator+(Tensor&& augend, Tensor&& addend) {
-  return add(augend, addend);
-}
-
-Tensor operator/(Tensor& dividend, Tensor& divisor) {
+Tensor operator/(const Tensor& dividend, const Tensor& divisor) {
   return div(dividend, divisor);
 }
 
-Tensor operator/(Tensor&& dividend, Tensor& divisor) {
-  return div(dividend, divisor);
-}
-
-Tensor operator/(Tensor& dividend, Tensor&& divisor) {
-  return div(dividend, divisor);
-}
-
-Tensor operator/(Tensor&& dividend, Tensor&& divisor) {
-  return div(dividend, divisor);
-}
-
-Tensor operator*(Tensor& multiplicand, Tensor& multiplier) {
+Tensor operator*(const Tensor& multiplicand, const Tensor& multiplier) {
   return mul(multiplicand, multiplier);
 }
 
-Tensor operator*(Tensor&& multiplicand, Tensor& multiplier) {
-  return mul(multiplicand, multiplier);
-}
-
-Tensor operator*(Tensor& multiplicand, Tensor&& multiplier) {
-  return mul(multiplicand, multiplier);
-}
-
-Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier) {
-  return mul(multiplicand, multiplier);
-}
-
-Tensor operator-(Tensor& minuend, Tensor& subtrahend) {
-  return sub(minuend, subtrahend);
-}
-
-Tensor operator-(Tensor&& minuend, Tensor& subtrahend) {
-  return sub(minuend, subtrahend);
-}
-
-Tensor operator-(Tensor& minuend, Tensor&& subtrahend) {
-  return sub(minuend, subtrahend);
-}
-
-Tensor operator-(Tensor&& minuend, Tensor&& subtrahend) {
+Tensor operator-(const Tensor& minuend, const Tensor& subtrahend) {
   return sub(minuend, subtrahend);
 }
 

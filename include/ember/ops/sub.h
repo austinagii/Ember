@@ -14,25 +14,7 @@ namespace ember {
  * @brief Subtract two tensors and return a new tensor representing the
  * difference.
  */
-Tensor sub(Tensor& minuend, Tensor& subtrahend);
-
-/**
- * @brief Subtract two tensors and return a new tensor representing the
- * difference.
- */
-Tensor sub(Tensor&& minuend, Tensor& subtrahend);
-
-/**
- * @brief Subtract two tensors and return a new tensor representing the
- * difference.
- */
-Tensor sub(Tensor& minuend, Tensor&& subtrahend);
-
-/**
- * @brief Subtract two tensors and return a new tensor representing the
- * difference.
- */
-Tensor sub(Tensor&& minuend, Tensor&& subtrahend);
+Tensor sub(const Tensor& minuend, const Tensor& subtrahend);
 
 }  // namespace ember
 

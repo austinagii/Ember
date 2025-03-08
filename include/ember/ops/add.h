@@ -13,22 +13,7 @@ namespace ember {
 /**
  * @brief Add two tensors and return a new tensor representing the sum.
  */
-Tensor add(Tensor& augend, Tensor& addend);
-
-/**
- * @brief Add two tensors and return a new tensor representing the sum.
- */
-Tensor add(Tensor& augend, Tensor&& addend);
-
-/**
- * @brief Add two tensors and return a new tensor representing the sum.
- */
-Tensor add(Tensor&& augend, Tensor& addend);
-
-/**
- * @brief Add two tensors and return a new tensor representing the sum.
- */
-Tensor add(Tensor&& augend, Tensor&& addend);
+Tensor add(const Tensor& augend, const Tensor& addend);
 
 }  // namespace ember
 

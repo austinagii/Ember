@@ -13,22 +13,7 @@ namespace ember {
 /**
  * @brief Multiply two tensors and return a new tensor representing the product.
  */
-Tensor mul(Tensor& multiplicand, Tensor& multiplier);
-
-/**
- * @brief Multiply two tensors and return a new tensor representing the product.
- */
-Tensor mul(Tensor&& multiplicand, Tensor& multiplier);
-
-/**
- * @brief Multiply two tensors and return a new tensor representing the product.
- */
-Tensor mul(Tensor& multiplicand, Tensor&& multiplier);
-
-/**
- * @brief Multiply two tensors and return a new tensor representing the product.
- */
-Tensor mul(Tensor&& multiplicand, Tensor&& multiplier);
+Tensor mul(const Tensor& multiplicand, const Tensor& multiplier);
 
 }  // namespace ember
 

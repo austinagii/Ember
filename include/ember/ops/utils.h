@@ -14,7 +14,7 @@ xt::xarray<double> reduce_broadcast(
 #define REGISTER_OP_BACKWARD(name, backward_fn)                                \
   struct name##Backward : public autograd::Node {                              \
     template <typename... Tensors>                                             \
-    name##Backward(autograd::Context ctx, Tensors&... inputs)                  \
+    name##Backward(autograd::Context ctx, Tensors... inputs)                   \
         : autograd::Node() {                                                   \
       this->ctx = ctx;                                                         \
       std::size_t input_ix = 0;                                                \
@@ -35,7 +35,7 @@ xt::xarray<double> reduce_broadcast(
 #define REGISTER_UNARY_OP(name, forward_fn, backward_fn)                       \
   REGISTER_OP_BACKWARD(name, backward_fn)                                      \
                                                                                \
-  Tensor name(Tensor& input) {                                                 \
+  Tensor name(const Tensor& input) {                                           \
     autograd::Context ctx;                                                     \
     Tensor output = forward_fn(ctx, input);                                    \
     if (input.requires_grad()) {                                               \
@@ -43,14 +43,12 @@ xt::xarray<double> reduce_broadcast(
       output.set_gradient_fn(new name##Backward(ctx, input));                  \
     }                                                                          \
     return output;                                                             \
-  }                                                                            \
-                                                                               \
-  Tensor name(Tensor&& input) { return name(input); }
+  }
 
 #define REGISTER_BINARY_OP(name, forward_fn, backward_fn)                      \
   REGISTER_OP_BACKWARD(name, backward_fn)                                      \
                                                                                \
-  Tensor name(Tensor& input1, Tensor& input2) {                                \
+  Tensor name(const Tensor& input1, const Tensor& input2) {                    \
     autograd::Context ctx;                                                     \
     Tensor output = forward_fn(ctx, input1, input2);                           \
     if (input1.requires_grad() || input2.requires_grad()) {                    \
@@ -58,16 +56,6 @@ xt::xarray<double> reduce_broadcast(
       output.set_gradient_fn(new name##Backward(ctx, input1, input2));         \
     }                                                                          \
     return output;                                                             \
-  }                                                                            \
-                                                                               \
-  Tensor name(Tensor&& input1, Tensor& input2) {                               \
-    return name(input1, input2);                                               \
-  }                                                                            \
-                                                                               \
-  Tensor name(Tensor& input1, Tensor&& input2) {                               \
-    return name(input1, input2);                                               \
-  }                                                                            \
-                                                                               \
-  Tensor name(Tensor&& input1, Tensor&& input2) { return name(input1, input2); }
+  }
 
 #endif  // EMBER_OPS_UTILS_H

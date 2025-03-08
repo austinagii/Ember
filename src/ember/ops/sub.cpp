@@ -8,8 +8,8 @@ namespace ember {
 std::size_t MINUEND_INDEX = 0;
 std::size_t SUBTRAHEND_INDEX = 1;
 
-static Tensor sub_forward(autograd::Context& context, Tensor& minuend,
-                          Tensor& subtrahend) {
+static Tensor sub_forward(autograd::Context& context, const Tensor& minuend,
+                          const Tensor& subtrahend) {
   context.save_for_backward(minuend);
   context.save_for_backward(subtrahend);
   return Tensor::from_xarray_(xt::eval(minuend.data_ - subtrahend.data_));
@@ -30,7 +30,7 @@ static Tensor sub_forward(autograd::Context& context, Tensor& minuend,
  * operation.
  */
 std::vector<Tensor> sub_backward(autograd::Context& context,
-                                 Tensor output_grad) {
+                                 const Tensor& output_grad) {
   auto minuend = context.saved_tensors[MINUEND_INDEX];
   auto subtrahend = context.saved_tensors[SUBTRAHEND_INDEX];
 

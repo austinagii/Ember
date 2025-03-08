@@ -23,7 +23,8 @@
 #include <type_traits>
 #include <vector>
 
-template <typename T> using init_list = std::initializer_list<T>;
+template <typename T>
+using init_list = std::initializer_list<T>;
 
 namespace ember {
 
@@ -134,14 +135,16 @@ public:
   /**
    * @brief Access a tensor element (const version)
    */
-  template <typename... Args> double operator()(Args... args) const {
+  template <typename... Args>
+  double operator()(Args... args) const {
     return data_(args...);
   }
 
   /**
    * @brief Access a tensor element (mutable version)
    */
-  template <typename... Args> double& operator()(Args... args) {
+  template <typename... Args>
+  double& operator()(Args... args) {
     return data_(args...);
   }
 
@@ -191,7 +194,7 @@ public:
   /**
    * @brief Saves the current state of this tensor.
    */
-  TensorSnapshot save();
+  TensorSnapshot save() const;
 
   /**
    * @brief Creates a tensor from an existing xarray.
@@ -254,22 +257,13 @@ private:
   friend struct TensorSnapshot;
 };  // class Tensor
 
-Tensor operator+(Tensor& augend, Tensor& addend);
-Tensor operator+(Tensor& augend, Tensor&& addend);
-Tensor operator+(Tensor&& augend, Tensor& addend);
-Tensor operator+(Tensor&& augend, Tensor&& addend);
-Tensor operator/(Tensor& dividend, Tensor& divisor);
-Tensor operator/(Tensor&& dividend, Tensor& divisor);
-Tensor operator/(Tensor& dividend, Tensor&& divisor);
-Tensor operator/(Tensor&& dividend, Tensor&& divisor);
-Tensor operator*(Tensor& multiplicand, Tensor& multiplier);
-Tensor operator*(Tensor&& multiplicand, Tensor& multiplier);
-Tensor operator*(Tensor& multiplicand, Tensor&& multiplier);
-Tensor operator*(Tensor&& multiplicand, Tensor&& multiplier);
-Tensor operator-(Tensor& minuend, Tensor& subtrahend);
-Tensor operator-(Tensor&& minuend, Tensor& subtrahend);
-Tensor operator-(Tensor& minuend, Tensor&& subtrahend);
-Tensor operator-(Tensor&& minuend, Tensor&& subtrahend);
+Tensor operator+(const Tensor& augend, const Tensor& addend);
+
+Tensor operator-(const Tensor& minuend, const Tensor& subtrahend);
+
+Tensor operator*(const Tensor& multiplicand, const Tensor& multiplier);
+
+Tensor operator/(const Tensor& dividend, const Tensor& divisor);
 
 }  // namespace ember
 

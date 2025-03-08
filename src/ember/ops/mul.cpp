@@ -8,8 +8,9 @@ namespace ember {
 std::size_t MULTIPLICAND_INDEX = 0;
 std::size_t MULTIPLIER_INDEX = 1;
 
-static Tensor mul_forward(autograd::Context& context, Tensor& multiplicand,
-                          Tensor& multiplier) {
+static Tensor mul_forward(autograd::Context& context,
+                          const Tensor& multiplicand,
+                          const Tensor& multiplier) {
   context.save_for_backward(multiplicand);
   context.save_for_backward(multiplier);
   return Tensor::from_xarray_(xt::eval(multiplicand.data_ * multiplier.data_));
@@ -32,7 +33,7 @@ static Tensor mul_forward(autograd::Context& context, Tensor& multiplicand,
  * operation.
  */
 std::vector<Tensor> mul_backward(autograd::Context& context,
-                                 Tensor output_grad) {
+                                 const Tensor& output_grad) {
   auto multiplicand = context.saved_tensors[MULTIPLICAND_INDEX];
   auto multiplier = context.saved_tensors[MULTIPLIER_INDEX];
 

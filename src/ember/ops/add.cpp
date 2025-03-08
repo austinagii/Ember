@@ -15,8 +15,8 @@ std::size_t ADDEND_INDEX = 1;
 /**
  * @brief Add two tensors and return a new tensor representing the sum.
  */
-static Tensor add_forward(autograd::Context& context, Tensor& augend,
-                          Tensor& addend) {
+static Tensor add_forward(autograd::Context& context, const Tensor& augend,
+                          const Tensor& addend) {
   context.save_for_backward(augend, addend);
   return Tensor::from_xarray_(xt::eval(augend.data_ + addend.data_));
 }
@@ -36,7 +36,7 @@ static Tensor add_forward(autograd::Context& context, Tensor& augend,
  * operation.
  */
 std::vector<Tensor> add_backward(autograd::Context& context,
-                                 Tensor output_grad) {
+                                 const Tensor& output_grad) {
   auto augend = context.saved_tensors[AUGEND_INDEX];
   auto addend = context.saved_tensors[ADDEND_INDEX];
 

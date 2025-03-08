@@ -2,7 +2,6 @@
 
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-#include <iostream>
 #include <xtensor/xio.hpp>
 
 using namespace ember;
@@ -11,11 +10,9 @@ TEST(TensorSubtraction, ScalarTensorsCanBeSubtracted) {
   Tensor a({1.0}, true);
   Tensor b({5.0}, true);
   Tensor c = a - b;
-
   EXPECT_EQ(c, Tensor({-4.0}));
 
   c.backward();
-
   EXPECT_EQ(*a.gradient, Tensor({1.0}));
   EXPECT_EQ(*b.gradient, Tensor({-1.0}));
 }
