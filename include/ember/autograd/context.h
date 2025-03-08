@@ -5,10 +5,6 @@
 
 #include <vector>
 
-namespace ember {
-class Tensor;
-}
-
 namespace ember::autograd {
 
 struct Context {
