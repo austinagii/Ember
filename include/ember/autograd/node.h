@@ -41,20 +41,6 @@ namespace ember::autograd {
 struct Node {
   Node() = default;
 
-  template <typename... Tensors>
-  Node(Context ctx, Tensors&... inputs) : ctx(ctx) {
-    std::size_t input_ix = 0;
-
-    auto add_input = [this, &input_ix](auto& tensor) {
-      if (tensor.requires_grad) {
-        add_next_edge(autograd::Edge(input_ix, tensor.get_gradient_edge()));
-      }
-      saved_tensors.emplace_back(tensor.save());
-      input_ix += 1;
-    };
-    (add_input(inputs), ...);
-  }
-
   Context ctx;
 
   /**
