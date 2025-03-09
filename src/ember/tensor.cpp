@@ -11,9 +11,9 @@
 
 namespace ember {
 
-Tensor::Tensor() {}
-
-Tensor::Tensor(bool requires_grad) { this->requires_grad(requires_grad); }
+Tensor::Tensor(bool requires_grad) {
+  this->requires_grad(requires_grad);
+}
 
 Tensor::Tensor(double value, bool requires_grad) : Tensor(requires_grad) {
   data_ = xt::xarray<double>({value});
@@ -52,7 +52,9 @@ Tensor& Tensor::requires_grad(bool requires_grad) {
   return *this;
 }
 
-bool Tensor::requires_grad() const { return requires_grad_; }
+bool Tensor::requires_grad() const {
+  return requires_grad_;
+}
 
 autograd::Node* Tensor::get_gradient_fn() const {
   if (gradient_fn == nullptr) {
@@ -74,11 +76,33 @@ void Tensor::backward(const Tensor& gradient) {
   engine.backward(this->gradient_fn, gradient);
 }
 
-void Tensor::backward() { backward(Tensor::ones_like(*this)); }
+void Tensor::backward() {
+  backward(Tensor::ones_like(*this));
+}
 
-Tensor Tensor::matmul(Tensor& other) { return ember::matmul(*this, other); }
+Tensor Tensor::add(const Tensor& other) {
+  return ember::add(*this, other);
+}
 
-Tensor Tensor::exp() { return ember::exp(*this); }
+Tensor Tensor::sub(const Tensor& other) {
+  return ember::sub(*this, other);
+}
+
+Tensor Tensor::mul(const Tensor& other) {
+  return ember::mul(*this, other);
+}
+
+Tensor Tensor::div(const Tensor& other) {
+  return ember::div(*this, other);
+}
+
+Tensor Tensor::matmul(Tensor& other) {
+  return ember::matmul(*this, other);
+}
+
+Tensor Tensor::exp() {
+  return ember::exp(*this);
+}
 
 bool operator==(const Tensor& left, const Tensor& right) {
   return xt::all(xt::equal(left.data_, right.data_));
@@ -88,7 +112,9 @@ bool Tensor::equals_approx(const Tensor& other) {
   return xt::allclose(this->data_, other.data_);
 }
 
-TensorSnapshot Tensor::save() const { return TensorSnapshot(*this); }
+TensorSnapshot Tensor::save() const {
+  return TensorSnapshot(*this);
+}
 
 Tensor Tensor::from_shape(std::initializer_list<size_t> shape) {
   return Tensor::from_xarray_(xt::xarray<double>::from_shape(shape));

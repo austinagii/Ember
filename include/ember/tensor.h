@@ -43,43 +43,48 @@ struct Tensor {
 public:
   // The multidimensional array of data this tensor contains.
   xt::xarray<double> data_;
-  // The gradient of this node w.r.t. the ancestor on which backward was
-  // called.
+
+  // The gradient of this tensor w.r.t. the output tensor on which backward
+  // was called.
   Tensor* gradient = nullptr;
 
-  // Default constructor
-  Tensor();
-
-  // Constructor with requires_grad flag
-  explicit Tensor(bool requires_grad);
+  /**
+   * @brief Constructs an empty tensor.
+   *
+   * @param requires_grad If true, the tensor will track gradients for autograd
+   * @example
+   *   Tensor t = Tensor(); // Creates an empty tensor with gradient tracking
+   *   disabled
+   */
+  explicit Tensor(bool requires_grad = false);
 
   /**
    * @brief Constructs a tensor with a single value.
+   *
    * @param value The value to initialize the tensor with
-   * @param requires_grad If true, the tensor will track gradients for
-   * autograd
+   * @param requires_grad If true, the tensor will track gradients for autograd
    * @example
-   *   Tensor t(1.0); // Creates a tensor with a single value 1.0
+   *   Tensor t = Tensor(1.0); // Creates a tensor with a single value 1.0
    */
   Tensor(double value, bool requires_grad = false);
 
   /**
    * @brief Constructs a 1-dimensional tensor from a list of values.
+   *
    * @param values The values to initialize the tensor with
-   * @param requires_grad If true, the tensor will track gradients for
-   * autograd
+   * @param requires_grad If true, the tensor will track gradients for autograd
    * @example
-   *   Tensor t({1.0, 2.0, 3.0}); // Creates a 1D tensor [1.0, 2.0, 3.0]
+   *   Tensor t = Tensor({1.0, 2.0, 3.0}); // Creates a 1D tensor [1.0, 2.0, 3.0]
    */
   Tensor(init_list<double> values, bool requires_grad = false);
 
   /**
    * @brief Constructs a 2-dimensional tensor from a nested list of values.
+   *
    * @param values The values to initialize the tensor with
-   * @param requires_grad If true, the tensor will track gradients for
-   * autograd
+   * @param requires_grad If true, the tensor will track gradients for autograd
    * @example
-   *   Tensor t({
+   *   Tensor t = Tensor({
    *     {1.0, 2.0},
    *     {3.0, 4.0}
    *   }); // Creates a 2x2 tensor [[1.0, 2.0], [3.0, 4.0]]
@@ -89,11 +94,11 @@ public:
   /**
    * @brief Constructs a 3-dimensional tensor from a doubly-nested list of
    * values.
+   *
    * @param values The values to initialize the tensor with
-   * @param requires_grad If true, the tensor will track gradients for
-   * autograd
+   * @param requires_grad If true, the tensor will track gradients for autograd
    * @example
-   *   Tensor t({
+   *   Tensor t = Tensor({
    *     {{1.0, 2.0}, {3.0, 4.0}},
    *     {{5.0, 6.0}, {7.0, 8.0}}
    *   }); // Creates a 2x2x2 tensor
@@ -103,12 +108,18 @@ public:
 
   /**
    * @brief Copy constructor that creates a deep copy of another tensor
+   *
    * @param other The tensor to copy from
+   * @example
+   *   Tensor t1 = Tensor({1.0, 2.0, 3.0});
+   *   Tensor t2 = Tensor(t1); // Creates a new tensor t2 with the same values
+   * as t1
    */
   Tensor(const Tensor& other);
 
   /**
    * @brief Sets whether this tensor requires gradients.
+   *
    * @param requires_grad If true, the tensor will track gradients for autograd
    * @return A reference to this tensor
    */
@@ -162,16 +173,32 @@ public:
   void backward();
 
   /**
-   * @brief Performs the matrix multiplication between this tensor and the one
-   * specified.
-   *
-   * This is equivalent to `ember::matmul(this, other)`.
+   * @see ember::ops::add
+   */
+  Tensor add(const Tensor& other);
+
+  /**
+   * @see ember::ops::sub
+   */
+  Tensor sub(const Tensor& other);
+
+  /**
+   * @see ember::ops::mul
+   */
+  Tensor mul(const Tensor& other);
+
+  /**
+   * @see ember::ops::div
+   */
+  Tensor div(const Tensor& other);
+
+  /**
+   * @see ember::ops::matmul
    */
   Tensor matmul(Tensor& other);
 
   /**
-   * @brief Computes the exponential of each element in the tensor.
-   * @return A new tensor with the exponential of each element
+   * @see ember::ops::exp
    */
   Tensor exp();
 
@@ -257,12 +284,24 @@ private:
   friend struct TensorSnapshot;
 };  // class Tensor
 
+/**
+ * @see ember::ops::add
+ */
 Tensor operator+(const Tensor& augend, const Tensor& addend);
 
+/**
+ * @see ember::ops::sub
+ */
 Tensor operator-(const Tensor& minuend, const Tensor& subtrahend);
 
+/**
+ * @see ember::ops::mul
+ */
 Tensor operator*(const Tensor& multiplicand, const Tensor& multiplier);
 
+/**
+ * @see ember::ops::div
+ */
 Tensor operator/(const Tensor& dividend, const Tensor& divisor);
 
 }  // namespace ember
