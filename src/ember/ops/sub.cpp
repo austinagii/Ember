@@ -12,7 +12,7 @@ static Tensor sub_forward(autograd::Context& context, const Tensor& minuend,
                           const Tensor& subtrahend) {
   context.save_for_backward(minuend);
   context.save_for_backward(subtrahend);
-  return Tensor::from_xarray_(xt::eval(minuend.data_ - subtrahend.data_));
+  return Tensor::from_xarray(xt::eval(minuend.data_ - subtrahend.data_));
 }
 
 /**
@@ -42,8 +42,8 @@ std::vector<Tensor> sub_backward(autograd::Context& context,
   xt::xarray<double> subtrahend_grad =
       reduce_broadcast(subtrahend_grad_broadcasted, subtrahend.data_.shape());
 
-  return {Tensor::from_xarray_(minuend_grad),
-          Tensor::from_xarray_(subtrahend_grad)};
+  return {Tensor::from_xarray(minuend_grad),
+          Tensor::from_xarray(subtrahend_grad)};
 }
 
 REGISTER_BINARY_OP(sub, sub_forward, sub_backward);

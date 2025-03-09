@@ -44,7 +44,7 @@ TEST(TensorConstructors, ThreeDimensionalInitializerList) {
 
 TEST(TensorStaticInitializers, FromXArrayCreatesCorrectTensor) {
   xt::xarray<double> data = {{1.0, 2.0}, {3.0, 4.0}};
-  Tensor t = Tensor::from_xarray_(data);
+  Tensor t = Tensor::from_xarray(data);
   EXPECT_TRUE(xt::allclose(t.data_, data));
   EXPECT_EQ(t.gradient, nullptr);
   EXPECT_EQ(t.get_gradient_fn(), nullptr);

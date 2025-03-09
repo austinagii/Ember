@@ -228,11 +228,7 @@ public:
    * @param data The xarray to create the tensor from
    * @return A new tensor containing the provided data
    */
-  static Tensor from_xarray_(xt::xarray<double> data) {
-    auto t = Tensor();
-    t.data_ = data;
-    return t;
-  }
+  static Tensor from_xarray(xt::xarray<double> data);
 
   /**
    * @brief Creates a new tensor with the specified shape, initialized to
@@ -245,7 +241,7 @@ public:
    * with all elements set to 0.
    */
   static Tensor zeros_like(const Tensor& other) {
-    return Tensor::from_xarray_(xt::zeros_like(other.data_));
+    return Tensor::from_xarray(xt::zeros_like(other.data_));
   }
 
   /**

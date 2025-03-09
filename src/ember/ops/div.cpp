@@ -15,7 +15,7 @@ static Tensor div_forward(autograd::Context& context, const Tensor& dividend,
   }
   context.save_for_backward(dividend);
   context.save_for_backward(divisor);
-  return Tensor::from_xarray_(xt::eval(dividend.data_ / divisor.data_));
+  return Tensor::from_xarray(xt::eval(dividend.data_ / divisor.data_));
 }
 
 /**
@@ -45,8 +45,8 @@ std::vector<Tensor> div_backward(autograd::Context& context,
       reduce_broadcast(dividend_grad_raw, dividend.data_.shape());
   auto divisor_grad = reduce_broadcast(divisor_grad_raw, divisor.data_.shape());
 
-  return {Tensor::from_xarray_(dividend_grad),
-          Tensor::from_xarray_(divisor_grad)};
+  return {Tensor::from_xarray(dividend_grad),
+          Tensor::from_xarray(divisor_grad)};
 }
 
 REGISTER_BINARY_OP(div, div_forward, div_backward);

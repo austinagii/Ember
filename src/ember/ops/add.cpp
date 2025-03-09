@@ -18,7 +18,7 @@ std::size_t ADDEND_INDEX = 1;
 static Tensor add_forward(autograd::Context& context, const Tensor& augend,
                           const Tensor& addend) {
   context.save_for_backward(augend, addend);
-  return Tensor::from_xarray_(xt::eval(augend.data_ + addend.data_));
+  return Tensor::from_xarray(xt::eval(augend.data_ + addend.data_));
 }
 
 /**
@@ -45,8 +45,8 @@ std::vector<Tensor> add_backward(autograd::Context& context,
   auto addend_gradient =
       reduce_broadcast(output_grad.data_, addend.data_.shape());
 
-  return {Tensor::from_xarray_(augend_gradient),
-          Tensor::from_xarray_(addend_gradient)};
+  return {Tensor::from_xarray(augend_gradient),
+          Tensor::from_xarray(addend_gradient)};
 }
 
 REGISTER_BINARY_OP(add, add_forward, add_backward);

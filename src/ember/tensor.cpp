@@ -116,17 +116,23 @@ TensorSnapshot Tensor::save() const {
   return TensorSnapshot(*this);
 }
 
+Tensor Tensor::from_xarray(xt::xarray<double> data) {
+  Tensor t;
+  t.data_ = xt::xarray<double>(data);
+  return t;
+}
+
 Tensor Tensor::from_shape(std::initializer_list<size_t> shape) {
-  return Tensor::from_xarray_(xt::xarray<double>::from_shape(shape));
+  return Tensor::from_xarray(xt::xarray<double>::from_shape(shape));
 }
 
 Tensor Tensor::ones_like(const Tensor& other) {
-  return Tensor::from_xarray_(xt::ones_like(other.data_));
+  return Tensor::from_xarray(xt::ones_like(other.data_));
 }
 
 Tensor Tensor::randn(std::initializer_list<size_t> shape, double mean,
                      double std) {
-  return Tensor::from_xarray_(xt::random::randn<double>(shape, mean, std));
+  return Tensor::from_xarray(xt::random::randn<double>(shape, mean, std));
 }
 
 Tensor operator+(const Tensor& augend, const Tensor& addend) {

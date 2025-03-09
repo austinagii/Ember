@@ -13,7 +13,7 @@ static Tensor mul_forward(autograd::Context& context,
                           const Tensor& multiplier) {
   context.save_for_backward(multiplicand);
   context.save_for_backward(multiplier);
-  return Tensor::from_xarray_(xt::eval(multiplicand.data_ * multiplier.data_));
+  return Tensor::from_xarray(xt::eval(multiplicand.data_ * multiplier.data_));
 }
 
 /**
@@ -47,8 +47,8 @@ std::vector<Tensor> mul_backward(autograd::Context& context,
   auto multiplier_grad =
       reduce_broadcast(multiplier_grad_raw, multiplier.data_.shape());
 
-  return {Tensor::from_xarray_(multiplicand_grad),
-          Tensor::from_xarray_(multiplier_grad)};
+  return {Tensor::from_xarray(multiplicand_grad),
+          Tensor::from_xarray(multiplier_grad)};
 }
 
 REGISTER_BINARY_OP(mul, mul_forward, mul_backward);
