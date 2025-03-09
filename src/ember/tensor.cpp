@@ -104,8 +104,8 @@ Tensor Tensor::exp() {
   return ember::exp(*this);
 }
 
-bool operator==(const Tensor& left, const Tensor& right) {
-  return left == right;
+bool Tensor::equals(const Tensor& other) {
+  return *this == other;
 }
 
 bool Tensor::equals_approx(const Tensor& other) {
