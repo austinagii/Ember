@@ -208,7 +208,7 @@ public:
    * Exact equality means that the tensors both have the same shape and there
    * is element-wise equality.
    */
-  friend bool operator==(const Tensor& left, const Tensor& right);
+  bool equals(const Tensor& other);
 
   /**
    * @brief Compares two tensors to determine if they are approximately equal.
@@ -304,6 +304,11 @@ Tensor operator*(const Tensor& multiplicand, const Tensor& multiplier);
  */
 Tensor operator/(const Tensor& dividend, const Tensor& divisor);
 
+/**
+ * @see ember::Tensor::equals
+ */
+bool operator==(const Tensor& left, const Tensor& right);
+
 }  // namespace ember
 
-#endif  // EMBER_TENSOR_H
+#endif  // !EMBER_TENSOR_H

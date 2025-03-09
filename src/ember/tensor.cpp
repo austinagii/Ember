@@ -105,7 +105,7 @@ Tensor Tensor::exp() {
 }
 
 bool operator==(const Tensor& left, const Tensor& right) {
-  return xt::all(xt::equal(left.data_, right.data_));
+  return left == right;
 }
 
 bool Tensor::equals_approx(const Tensor& other) {
@@ -143,6 +143,10 @@ Tensor operator*(const Tensor& multiplicand, const Tensor& multiplier) {
 
 Tensor operator-(const Tensor& minuend, const Tensor& subtrahend) {
   return sub(minuend, subtrahend);
+}
+
+bool operator==(const Tensor& left, const Tensor& right) {
+  return xt::all(xt::equal(left.data_, right.data_));
 }
 
 }  // namespace ember
